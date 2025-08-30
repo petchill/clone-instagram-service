@@ -6,10 +6,14 @@ services:
     ports:
       - 5000:5000
     build: 
-      context: ./clone-instagram-service
+      context: .
       dockerfile: Dockerfile.dev
     env_file:
       - .env
+    volumes:
+      - .:/app
+    depends_on:
+      - postgres
 
   postgres:
     image: postgres:14-alpine
