@@ -5,6 +5,7 @@ import (
 	"context"
 	"fmt"
 	"mime/multipart"
+	"path/filepath"
 	"time"
 
 	"github.com/google/uuid"
@@ -20,17 +21,18 @@ func NewMediaService(mediaRepo mMedia.MediaRepository) *mediaService {
 	}
 }
 
-func generateObjectKey(userID string) string {
+func generateObjectKey(userID string, fileType string) string {
 	uuid := uuid.New()
-	return fmt.Sprintf("media/%s/%s", userID, uuid)
+	return fmt.Sprintf("media/%s/%s%s", userID, uuid, fileType)
 }
 
 // function to store media inti the DB included meta-data and file
 // 1. upload to file store
 // 2. get link from filestore and insert data to DB
-func (s *mediaService) CreateAndStoreMedia(ctx context.Context, userID string, media multipart.File, caption string) error {
-	objectKey := generateObjectKey(userID)
-	link, err := s.mediaRepo.UploadFileToFileStorage(ctx, objectKey, media)
+func (s *mediaService) CreateAndStoreMedia(ctx context.Context, userID string, fileName string, file multipart.File, caption string) error {
+	mediaFileType := filepath.Ext(fileName)
+	objectKey := generateObjectKey(userID, mediaFileType)
+	link, err := s.mediaRepo.UploadFileToFileStorage(ctx, objectKey, file)
 	if err != nil {
 		return err
 	}

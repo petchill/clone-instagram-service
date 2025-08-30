@@ -12,6 +12,8 @@ import (
 	"os"
 
 	"github.com/joho/godotenv"
+	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/credentials"
@@ -40,10 +42,17 @@ func main() {
 		log.Fatalf("unable to load SDK config, %v", err)
 	}
 
+	// postgres
+	dsn := os.Getenv("POSTGRES_CONNECTION")
+	db, err := gorm.Open(postgres.Open(dsn), &gorm.Config{})
+	if err != nil {
+		log.Fatalf("unable to connect to database, %v", err)
+	}
+
 	// Initialize S3 client
 	s3Client := s3.NewFromConfig(cfg)
 
-	mediaRepo := _repo.NewMediaRepository(awsConfig, s3Client)
+	mediaRepo := _repo.NewMediaRepository(awsConfig, s3Client, db)
 	mediaService := _service.NewMediaService(mediaRepo)
 
 	e := util.InitEchoApp()

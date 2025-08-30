@@ -28,6 +28,7 @@ func (h *mediaHandler) PostMedia(c echo.Context) error {
 	if err != nil {
 		return err
 	}
+
 	src, err := file.Open()
 	if err != nil {
 		return err
@@ -37,7 +38,7 @@ func (h *mediaHandler) PostMedia(c echo.Context) error {
 
 	ctx := c.Request().Context()
 
-	err = h.mediaService.CreateAndStoreMedia(ctx, "111", src, "hello1")
+	err = h.mediaService.CreateAndStoreMedia(ctx, "111", file.Filename, src, "hello1")
 	if err != nil {
 		fmt.Errorf("This is error", err)
 		return c.JSON(500, map[string]string{"status": "ERROR"})

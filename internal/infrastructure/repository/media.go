@@ -13,18 +13,22 @@ import (
 	"github.com/aws/aws-sdk-go-v2/aws"
 	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/aws/smithy-go"
+	"gorm.io/gorm"
 )
 
 type mediaRepository struct {
 	awsConfig model.AWSConfig
 	s3Client  *s3.Client
+	gormDB    *gorm.DB
 }
 
-func NewMediaRepository(awsConfig model.AWSConfig, s3Client *s3.Client) *mediaRepository {
+func NewMediaRepository(awsConfig model.AWSConfig, s3Client *s3.Client, gormDB *gorm.DB) *mediaRepository {
 	return &mediaRepository{
 		awsConfig: awsConfig,
 		s3Client:  s3Client,
+		gormDB:    gormDB,
 	}
+
 }
 
 func (r *mediaRepository) UploadFileToFileStorage(ctx context.Context, objectKey string, file multipart.File) (string, error) {
@@ -44,6 +48,7 @@ func (r *mediaRepository) UploadFileToFileStorage(ctx context.Context, objectKey
 				r.awsConfig.BucketName, objectKey, err)
 		}
 		return "", err
+
 	} else {
 		err = s3.NewObjectExistsWaiter(r.s3Client).Wait(
 			ctx, &s3.HeadObjectInput{Bucket: aws.String(r.awsConfig.BucketName), Key: aws.String(objectKey)}, time.Minute)
@@ -60,5 +65,10 @@ func (r *mediaRepository) UploadFileToFileStorage(ctx context.Context, objectKey
 }
 
 func (r *mediaRepository) InsertFileMetaData(ctx context.Context, mediaMetaData mMedia.MediaMetaData) error {
+	err := r.gormDB.Table("media").Create(&mediaMetaData).Error
+	if err != nil {
+		log.Printf("Error while inserting media metadata into database. Here's why: %v\n", err)
+		return err
+	}
 	return nil
 }
