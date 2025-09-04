@@ -17,3 +17,13 @@ type AccessCodeResponse struct {
 	IDToken      string `json:"id_token,omitempty"`
 	UserInfo     any    `json:"userinfo,omitempty"`
 }
+
+type UserInfo struct {
+	Sub           string `json:"sub"`
+	Name          string `json:"name"`
+	GivenName     string `json:"given_name"`
+	FamilyName    string `json:"family_name"`
+	Picture       string `json:"picture"`
+	Email         string `json:"email"`
+	EmailVerified bool   `json:"email_verified"`
+}
