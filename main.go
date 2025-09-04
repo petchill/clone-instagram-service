@@ -34,6 +34,12 @@ func main() {
 		PublicBucketBaseURL: os.Getenv("AWS_PUBLIC_BUCKET_BASE_URL"),
 	}
 
+	authConfig := model.OAuthConfig{
+		GoogleOAuthClientID:     os.Getenv("GOOGLE_OAUTH_CLIENT_ID"),
+		GoogleOAuthClientSecret: os.Getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
+		GoogleOAuthRedirectURL:  os.Getenv("GOOGLE_OAUTH_REDIRECT_URL"),
+	}
+
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithRegion(awsConfig.Region),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(awsConfig.AccessKeyID, awsConfig.SecretAccessKey, "")),
@@ -59,8 +65,10 @@ func main() {
 
 	mediaHandler := _handler.NewMediaHandler(mediaService)
 	healthCheckHandler := _infra.NewHealthCheckHandler()
+	authHandler := _handler.NewAuthHandler(authConfig)
 
 	mediaHandler.RegisterRoutes(e)
+	authHandler.RegisterRoutes(e)
 
 	e.GET("/health", healthCheckHandler.HealthCheck)
 
