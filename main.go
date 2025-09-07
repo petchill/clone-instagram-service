@@ -11,6 +11,8 @@ import (
 	"log"
 	"os"
 
+	_middleware "clone-instagram-service/internal/infrastructure/middleware"
+
 	mAuth "clone-instagram-service/internal/domain/model/auth"
 
 	"github.com/joho/godotenv"
@@ -78,13 +80,17 @@ func main() {
 
 	authRepo := _repo.NewAuthRepository(oauthConfig)
 
+	authMiddleWare := _middleware.NewAuthMiddleWare(authRepo)
+
 	e := util.InitEchoApp()
 
 	mediaHandler := _handler.NewMediaHandler(mediaService)
 	healthCheckHandler := _infra.NewHealthCheckHandler()
 	authHandler := _handler.NewAuthHandler(authRepo)
 
-	mediaHandler.RegisterRoutes(e)
+	privateRoute := e.Group("/private")
+	privateRoute.Use(authMiddleWare.AuthWithUser)
+	mediaHandler.RegisterRoutes(privateRoute)
 	authHandler.RegisterRoutes(e)
 
 	e.GET("/health", healthCheckHandler.HealthCheck)

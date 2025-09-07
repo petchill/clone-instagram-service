@@ -19,11 +19,15 @@ func NewMediaHandler(mediaService mMedia.MediaService) *mediaHandler {
 	}
 }
 
-func (h *mediaHandler) RegisterRoutes(e *echo.Echo) {
+func (h *mediaHandler) RegisterRoutes(e *echo.Group) {
 	e.POST("/media", h.PostMedia)
 }
 
 func (h *mediaHandler) PostMedia(c echo.Context) error {
+
+	user := c.Get("user")
+	fmt.Println(user)
+
 	file, err := c.FormFile("media") // "file" is the name of the input field in the HTML form
 	if err != nil {
 		return err
