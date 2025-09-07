@@ -11,7 +11,11 @@ import (
 	"log"
 	"os"
 
+	mAuth "clone-instagram-service/internal/domain/model/auth"
+
 	"github.com/joho/godotenv"
+	"golang.org/x/oauth2"
+	"golang.org/x/oauth2/google"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 
@@ -34,10 +38,21 @@ func main() {
 		PublicBucketBaseURL: os.Getenv("AWS_PUBLIC_BUCKET_BASE_URL"),
 	}
 
-	authConfig := model.OAuthConfig{
+	authConfig := mAuth.OAuthConfig{
 		GoogleOAuthClientID:     os.Getenv("GOOGLE_OAUTH_CLIENT_ID"),
 		GoogleOAuthClientSecret: os.Getenv("GOOGLE_OAUTH_CLIENT_SECRET"),
 		GoogleOAuthRedirectURL:  os.Getenv("GOOGLE_OAUTH_REDIRECT_URL"),
+	}
+
+	oauthConfig := &oauth2.Config{
+		ClientID:     authConfig.GoogleOAuthClientID,
+		ClientSecret: authConfig.GoogleOAuthClientSecret,
+		RedirectURL:  authConfig.GoogleOAuthRedirectURL,
+		Scopes: []string{
+			"https://www.googleapis.com/auth/bigquery",
+			"https://www.googleapis.com/auth/blogger",
+		},
+		Endpoint: google.Endpoint,
 	}
 
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
@@ -61,11 +76,13 @@ func main() {
 	mediaRepo := _repo.NewMediaRepository(awsConfig, s3Client, db)
 	mediaService := _service.NewMediaService(mediaRepo)
 
+	authRepo := _repo.NewAuthRepository(oauthConfig)
+
 	e := util.InitEchoApp()
 
 	mediaHandler := _handler.NewMediaHandler(mediaService)
 	healthCheckHandler := _infra.NewHealthCheckHandler()
-	authHandler := _handler.NewAuthHandler(authConfig)
+	authHandler := _handler.NewAuthHandler(authRepo)
 
 	mediaHandler.RegisterRoutes(e)
 	authHandler.RegisterRoutes(e)

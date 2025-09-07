@@ -1,4 +1,4 @@
-package model
+package auth
 
 type OAuthConfig struct {
 	GoogleOAuthClientID     string
