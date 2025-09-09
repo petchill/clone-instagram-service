@@ -78,6 +78,9 @@ func main() {
 	mediaRepo := _repo.NewMediaRepository(awsConfig, s3Client, db)
 	mediaService := _service.NewMediaService(mediaRepo)
 
+	relationshipRepo := _repo.NewRelationshipRepository(db)
+	relationshipService := _service.NewRelationshipService(relationshipRepo)
+
 	authRepo := _repo.NewAuthRepository(oauthConfig)
 
 	authMiddleWare := _middleware.NewAuthMiddleWare(authRepo)
@@ -87,10 +90,12 @@ func main() {
 	mediaHandler := _handler.NewMediaHandler(mediaService)
 	healthCheckHandler := _infra.NewHealthCheckHandler()
 	authHandler := _handler.NewAuthHandler(authRepo)
+	relationshipHandler := _handler.NewRelationshipHandler(relationshipService)
 
 	privateRoute := e.Group("/private")
 	privateRoute.Use(authMiddleWare.AuthWithUser)
 	mediaHandler.RegisterRoutes(privateRoute)
+	relationshipHandler.RegisterRoutes(privateRoute)
 	authHandler.RegisterRoutes(e)
 
 	e.GET("/health", healthCheckHandler.HealthCheck)
