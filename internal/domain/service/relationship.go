@@ -4,6 +4,8 @@ import (
 	mRelationship "clone-instagram-service/internal/domain/model/relationship"
 	"context"
 	"fmt"
+	"log"
+	"time"
 )
 
 type relationshipService struct {
@@ -24,14 +26,30 @@ func (s *relationshipService) FollowUser(ctx context.Context, userID string, tar
 		return err
 	}
 
+	fmt.Println("followingIds", followingIds)
+
 	if stringIsContained(followingIds, targetUserID) {
-		return fmt.Errorf("this following is already exists")
+		err = fmt.Errorf("this following is already exists")
+		log.Printf("Error: %s", err)
+		return err
 	}
 
 	err = s.relationshipRepo.InsertFollowing(ctx, mRelationship.Following{
 		UserId:       userID,
 		TargetUserID: targetUserID,
 	})
+
+	if err != nil {
+		return err
+	}
+
+	topicMessage := mRelationship.FollowingTopicMessage{
+		UserID:    userID,
+		TargetID:  targetUserID,
+		CreatedAt: time.Now(),
+	}
+
+	err = s.relationshipRepo.PublishFollowingTopic(ctx, topicMessage)
 
 	if err != nil {
 		return err

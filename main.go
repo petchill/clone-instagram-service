@@ -57,6 +57,10 @@ func main() {
 		Endpoint: google.Endpoint,
 	}
 
+	kafkaConfig := model.KafkaConfig{
+		Brokers: []string{os.Getenv("KAFKA_BROKER_ADDRESS")},
+	}
+
 	cfg, err := config.LoadDefaultConfig(context.TODO(),
 		config.WithRegion(awsConfig.Region),
 		config.WithCredentialsProvider(credentials.NewStaticCredentialsProvider(awsConfig.AccessKeyID, awsConfig.SecretAccessKey, "")),
@@ -78,7 +82,7 @@ func main() {
 	mediaRepo := _repo.NewMediaRepository(awsConfig, s3Client, db)
 	mediaService := _service.NewMediaService(mediaRepo)
 
-	relationshipRepo := _repo.NewRelationshipRepository(db)
+	relationshipRepo := _repo.NewRelationshipRepository(db, kafkaConfig)
 	relationshipService := _service.NewRelationshipService(relationshipRepo)
 
 	authRepo := _repo.NewAuthRepository(oauthConfig)

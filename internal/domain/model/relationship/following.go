@@ -12,3 +12,9 @@ type Following struct {
 type PostFollowRequestBody struct {
 	TargetID string `json:"target_id"`
 }
+
+type FollowingTopicMessage struct {
+	UserID    string    `json:"user_id"`
+	TargetID  string    `json:"target_id"`
+	CreatedAt time.Time `json:"created_at"`
+}

@@ -1,19 +1,32 @@
 package repository
 
 import (
+	"clone-instagram-service/internal/domain/model"
 	mRelationship "clone-instagram-service/internal/domain/model/relationship"
 	"context"
+	"encoding/json"
 	"log"
 
+	"github.com/segmentio/kafka-go"
 	"gorm.io/gorm"
 )
 
 type relationshipRepository struct {
-	gormDB *gorm.DB
+	gormDB           *gorm.DB
+	followingEventWr *kafka.Writer
 }
 
-func NewRelationshipRepository(db *gorm.DB) *relationshipRepository {
-	return &relationshipRepository{db}
+func NewRelationshipRepository(db *gorm.DB, kafkaConfig model.KafkaConfig) *relationshipRepository {
+
+	followingEventWr := kafka.NewWriter(kafka.WriterConfig{
+		Brokers:      kafkaConfig.Brokers,
+		Topic:        "following",
+		Balancer:     &kafka.LeastBytes{},
+		RequiredAcks: int(kafka.RequireAll), // good default
+		Async:        false,
+	})
+
+	return &relationshipRepository{db, followingEventWr}
 }
 
 func (r *relationshipRepository) GetAllFollowingIDsByUserID(ctx context.Context, userID string) ([]string, error) {
@@ -60,5 +73,26 @@ func (r *relationshipRepository) DeleteFollowingByUserIDAndTargetID(ctx context.
 		log.Printf("Error while deleting following from database. Here's why: %v\n", err)
 		return err
 	}
+	return nil
+}
+
+func (r *relationshipRepository) PublishFollowingTopic(ctx context.Context, message mRelationship.FollowingTopicMessage) error {
+
+	messageJson, err := json.Marshal(message)
+	if err != nil {
+		log.Println("Error from marshal message in topic following")
+		return err
+	}
+
+	err = r.followingEventWr.WriteMessages(ctx,
+		kafka.Message{
+			Value: messageJson,
+		},
+	)
+	if err != nil {
+		log.Println("Error from publish message in topic following")
+		return err
+	}
+
 	return nil
 }

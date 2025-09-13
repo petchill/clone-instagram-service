@@ -292,3 +292,60 @@ func (_c *MockRelationshipRepository_InsertFollowing_Call) RunAndReturn(run func
 	_c.Call.Return(run)
 	return _c
 }
+
+// PublishFollowingTopic provides a mock function for the type MockRelationshipRepository
+func (_mock *MockRelationshipRepository) PublishFollowingTopic(ctx context.Context, message FollowingTopicMessage) error {
+	ret := _mock.Called(ctx, message)
+
+	if len(ret) == 0 {
+		panic("no return value specified for PublishFollowingTopic")
+	}
+
+	var r0 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, FollowingTopicMessage) error); ok {
+		r0 = returnFunc(ctx, message)
+	} else {
+		r0 = ret.Error(0)
+	}
+	return r0
+}
+
+// MockRelationshipRepository_PublishFollowingTopic_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'PublishFollowingTopic'
+type MockRelationshipRepository_PublishFollowingTopic_Call struct {
+	*mock.Call
+}
+
+// PublishFollowingTopic is a helper method to define mock.On call
+//   - ctx context.Context
+//   - message FollowingTopicMessage
+func (_e *MockRelationshipRepository_Expecter) PublishFollowingTopic(ctx interface{}, message interface{}) *MockRelationshipRepository_PublishFollowingTopic_Call {
+	return &MockRelationshipRepository_PublishFollowingTopic_Call{Call: _e.mock.On("PublishFollowingTopic", ctx, message)}
+}
+
+func (_c *MockRelationshipRepository_PublishFollowingTopic_Call) Run(run func(ctx context.Context, message FollowingTopicMessage)) *MockRelationshipRepository_PublishFollowingTopic_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 FollowingTopicMessage
+		if args[1] != nil {
+			arg1 = args[1].(FollowingTopicMessage)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockRelationshipRepository_PublishFollowingTopic_Call) Return(err error) *MockRelationshipRepository_PublishFollowingTopic_Call {
+	_c.Call.Return(err)
+	return _c
+}
+
+func (_c *MockRelationshipRepository_PublishFollowingTopic_Call) RunAndReturn(run func(ctx context.Context, message FollowingTopicMessage) error) *MockRelationshipRepository_PublishFollowingTopic_Call {
+	_c.Call.Return(run)
+	return _c
+}

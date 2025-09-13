@@ -65,20 +65,21 @@ func (r *authRepository) GetUserInfoFromToken(ctx context.Context, accessToken s
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		log.Fatalf("Unexpected status code: %d", resp.StatusCode)
+		log.Printf("Unexpected status code: %d", resp.StatusCode)
+		err = fmt.Errorf("UnAuthorization")
 		return mAuth.UserInfo{}, err
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		log.Fatalf("Error reading response body: %v", err)
+		log.Printf("Error reading response body: %v", err)
 		return mAuth.UserInfo{}, err
 	}
 
 	userInfo := mAuth.UserInfo{}
 	err = json.Unmarshal(body, &userInfo)
 	if err != nil {
-		log.Fatalf("Error unmarshaling response body: %v", err)
+		log.Printf("Error unmarshaling response body: %v", err)
 		return mAuth.UserInfo{}, err
 	}
 
