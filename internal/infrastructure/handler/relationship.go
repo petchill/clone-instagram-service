@@ -43,7 +43,7 @@ func (h *relationshipHandler) PostFollow(c echo.Context) error {
 	err = h.relationshipService.FollowUser(ctx, user.Sub, followPayload.TargetID)
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, err)
+		c.JSON(http.StatusInternalServerError, map[string]string{"status": "ERROR", "error": err.Error()})
 		return nil
 	}
 

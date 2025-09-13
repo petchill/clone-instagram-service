@@ -26,8 +26,6 @@ func (s *relationshipService) FollowUser(ctx context.Context, userID string, tar
 		return err
 	}
 
-	fmt.Println("followingIds", followingIds)
-
 	if stringIsContained(followingIds, targetUserID) {
 		err = fmt.Errorf("this following is already exists")
 		log.Printf("Error: %s", err)
