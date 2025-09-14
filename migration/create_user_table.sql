@@ -5,5 +5,6 @@ create table if not exists "user" (
     given_name varchar(255),
     family_name varchar(255),
     picture varchar(255),
-    email varchar(255)
+    email varchar(255),
+	created_at TIMESTAMPTZ NOT NULL DEFAULT (NOW() AT TIME ZONE 'UTC')
 );

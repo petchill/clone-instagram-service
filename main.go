@@ -87,13 +87,16 @@ func main() {
 
 	authRepo := _repo.NewAuthRepository(oauthConfig)
 
+	userRepo := _repo.NewUserRepository(db)
+	userService := _service.NewUserService(userRepo, authRepo)
+
 	authMiddleWare := _middleware.NewAuthMiddleWare(authRepo)
 
 	e := util.InitEchoApp()
 
 	mediaHandler := _handler.NewMediaHandler(mediaService)
 	healthCheckHandler := _infra.NewHealthCheckHandler()
-	authHandler := _handler.NewAuthHandler(authRepo)
+	authHandler := _handler.NewAuthHandler(authRepo, userService)
 	relationshipHandler := _handler.NewRelationshipHandler(relationshipService)
 
 	privateRoute := e.Group("/private")

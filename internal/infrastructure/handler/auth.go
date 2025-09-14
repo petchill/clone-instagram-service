@@ -2,21 +2,22 @@ package handler
 
 import (
 	mAuth "clone-instagram-service/internal/domain/model/auth"
+	mUser "clone-instagram-service/internal/domain/model/user"
 	"fmt"
 	"net/http"
 	"strings"
-	"time"
 
 	"github.com/labstack/echo/v4"
 )
 
 type authHandler struct {
-	authRepo mAuth.AuthRepository
+	authRepo    mAuth.AuthRepository
+	userService mUser.UserService
 }
 
-func NewAuthHandler(authRepo mAuth.AuthRepository) *authHandler {
+func NewAuthHandler(authRepo mAuth.AuthRepository, userService mUser.UserService) *authHandler {
 
-	return &authHandler{authRepo: authRepo}
+	return &authHandler{authRepo: authRepo, userService: userService}
 }
 
 func (h *authHandler) RegisterRoutes(e *echo.Echo) {
@@ -55,17 +56,11 @@ func (h *authHandler) PostAccessCode(c echo.Context) error {
 	if err := c.Bind(&payload); err != nil {
 		return err
 	}
-	tok, err := h.authRepo.ExchangeCodeForToken(ctx, payload.Code)
-	if err != nil {
-		fmt.Printf("auth error ", err)
-		return c.JSON(http.StatusUnprocessableEntity, map[string]string{"status": "failed", "error": err.Error()})
-	}
 
-	resp := mAuth.AccessCodeResponse{
-		AccessToken:  tok.AccessToken,
-		ExpiresIn:    int64(time.Until(tok.Expiry).Seconds()),
-		RefreshToken: tok.RefreshToken, // present if you requested offline access & user consented
-		IDToken:      fmt.Sprint(tok.Extra("id_token")),
+	resp, err := h.userService.LoginWithGoogleAccessCode(ctx, payload.Code)
+	if err != nil {
+
+		return c.JSON(http.StatusUnauthorized, map[string]string{"status": "failed", "error": err.Error()})
 	}
 
 	return c.JSON(http.StatusOK, resp)
