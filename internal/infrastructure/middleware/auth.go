@@ -2,6 +2,7 @@ package middleware
 
 import (
 	mAuth "clone-instagram-service/internal/domain/model/auth"
+	mUser "clone-instagram-service/internal/domain/model/user"
 	"fmt"
 	"net/http"
 	"strings"
@@ -11,6 +12,7 @@ import (
 
 type authMiddleware struct {
 	authRepo mAuth.AuthRepository
+	userRepo mUser.UserRepository
 }
 
 func NewAuthMiddleWare(authRepo mAuth.AuthRepository) *authMiddleware {
@@ -32,13 +34,18 @@ func (mw *authMiddleware) AuthWithUser(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, map[string]string{"status": "failed", "error": "invalid authorization header"})
 		}
 		authToken = token[1]
-		userInfo, err := mw.authRepo.GetUserInfoFromToken(ctx, authToken)
+		authUser, err := mw.authRepo.GetUserInfoFromToken(ctx, authToken)
 		if err != nil {
 			fmt.Println("authToken", authToken)
 			return c.JSON(http.StatusUnauthorized, map[string]string{"status": "failed", "error": err.Error()})
 		}
 
-		c.Set("user", userInfo)
+		user, exists, err := mw.userRepo.GetUserByGoogleID(ctx, authUser.Sub)
+		if err != nil || !exists {
+			return c.JSON(http.StatusUnauthorized, map[string]string{"status": "failed", "error": "user not found"})
+		}
+
+		c.Set("user", user)
 
 		// Call the next middleware or handler in the chain
 		err = next(c)

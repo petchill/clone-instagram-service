@@ -1,8 +1,8 @@
 package handler
 
 import (
-	mAuth "clone-instagram-service/internal/domain/model/auth"
 	mRela "clone-instagram-service/internal/domain/model/relationship"
+	eUser "clone-instagram-service/internal/domain/model/user/entity"
 	"net/http"
 
 	"github.com/labstack/echo/v4"
@@ -27,7 +27,7 @@ func (h *relationshipHandler) RegisterRoutes(e *echo.Group) {
 func (h *relationshipHandler) PostFollow(c echo.Context) error {
 	ctx := c.Request().Context()
 
-	user, ok := c.Get("user").(mAuth.UserInfo)
+	user, ok := c.Get("user").(eUser.User)
 	if !ok {
 		c.JSON(http.StatusUnauthorized, "invalid user type")
 	}
@@ -40,7 +40,7 @@ func (h *relationshipHandler) PostFollow(c echo.Context) error {
 		return nil
 	}
 
-	err = h.relationshipService.FollowUser(ctx, user.Sub, followPayload.TargetID)
+	err = h.relationshipService.FollowUser(ctx, user.ID, followPayload.TargetID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, map[string]string{"status": "ERROR", "error": err.Error()})

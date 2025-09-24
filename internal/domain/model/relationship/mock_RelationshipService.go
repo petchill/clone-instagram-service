@@ -38,7 +38,7 @@ func (_m *MockRelationshipService) EXPECT() *MockRelationshipService_Expecter {
 }
 
 // FollowUser provides a mock function for the type MockRelationshipService
-func (_mock *MockRelationshipService) FollowUser(ctx context.Context, userID string, targetUserID string) error {
+func (_mock *MockRelationshipService) FollowUser(ctx context.Context, userID int, targetUserID int) error {
 	ret := _mock.Called(ctx, userID, targetUserID)
 
 	if len(ret) == 0 {
@@ -46,7 +46,7 @@ func (_mock *MockRelationshipService) FollowUser(ctx context.Context, userID str
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string, string) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
 		r0 = returnFunc(ctx, userID, targetUserID)
 	} else {
 		r0 = ret.Error(0)
@@ -61,25 +61,25 @@ type MockRelationshipService_FollowUser_Call struct {
 
 // FollowUser is a helper method to define mock.On call
 //   - ctx context.Context
-//   - userID string
-//   - targetUserID string
+//   - userID int
+//   - targetUserID int
 func (_e *MockRelationshipService_Expecter) FollowUser(ctx interface{}, userID interface{}, targetUserID interface{}) *MockRelationshipService_FollowUser_Call {
 	return &MockRelationshipService_FollowUser_Call{Call: _e.mock.On("FollowUser", ctx, userID, targetUserID)}
 }
 
-func (_c *MockRelationshipService_FollowUser_Call) Run(run func(ctx context.Context, userID string, targetUserID string)) *MockRelationshipService_FollowUser_Call {
+func (_c *MockRelationshipService_FollowUser_Call) Run(run func(ctx context.Context, userID int, targetUserID int)) *MockRelationshipService_FollowUser_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 string
+		var arg1 int
 		if args[1] != nil {
-			arg1 = args[1].(string)
+			arg1 = args[1].(int)
 		}
-		var arg2 string
+		var arg2 int
 		if args[2] != nil {
-			arg2 = args[2].(string)
+			arg2 = args[2].(int)
 		}
 		run(
 			arg0,
@@ -95,7 +95,7 @@ func (_c *MockRelationshipService_FollowUser_Call) Return(err error) *MockRelati
 	return _c
 }
 
-func (_c *MockRelationshipService_FollowUser_Call) RunAndReturn(run func(ctx context.Context, userID string, targetUserID string) error) *MockRelationshipService_FollowUser_Call {
+func (_c *MockRelationshipService_FollowUser_Call) RunAndReturn(run func(ctx context.Context, userID int, targetUserID int) error) *MockRelationshipService_FollowUser_Call {
 	_c.Call.Return(run)
 	return _c
 }

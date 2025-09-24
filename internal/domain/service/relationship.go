@@ -18,7 +18,7 @@ func NewRelationshipService(relationshipRepo mRelationship.RelationshipRepositor
 	}
 }
 
-func (s *relationshipService) FollowUser(ctx context.Context, userID string, targetUserID string) error {
+func (s *relationshipService) FollowUser(ctx context.Context, userID int, targetUserID int) error {
 	// TODO: should validate target_id is exist in user db
 
 	followingIds, err := s.relationshipRepo.GetAllFollowingIDsByUserID(ctx, userID)
@@ -26,7 +26,7 @@ func (s *relationshipService) FollowUser(ctx context.Context, userID string, tar
 		return err
 	}
 
-	if stringIsContained(followingIds, targetUserID) {
+	if IntIsContained(followingIds, targetUserID) {
 		err = fmt.Errorf("this following is already exists")
 		log.Printf("Error: %s", err)
 		return err
@@ -54,6 +54,15 @@ func (s *relationshipService) FollowUser(ctx context.Context, userID string, tar
 	}
 
 	return nil
+}
+
+func IntIsContained(list []int, target int) bool {
+	for _, i := range list {
+		if i == target {
+			return true
+		}
+	}
+	return false
 }
 
 func stringIsContained(list []string, target string) bool {

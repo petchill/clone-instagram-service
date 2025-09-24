@@ -29,8 +29,8 @@ func NewRelationshipRepository(db *gorm.DB, kafkaConfig model.KafkaConfig) *rela
 	return &relationshipRepository{db, followingEventWr}
 }
 
-func (r *relationshipRepository) GetAllFollowingIDsByUserID(ctx context.Context, userID string) ([]string, error) {
-	followingUserIDs := []string{}
+func (r *relationshipRepository) GetAllFollowingIDsByUserID(ctx context.Context, userID int) ([]int, error) {
+	followingUserIDs := []int{}
 	err := r.gormDB.
 		Table("following").
 		Where("user_id = ?", userID).
@@ -42,8 +42,8 @@ func (r *relationshipRepository) GetAllFollowingIDsByUserID(ctx context.Context,
 	return followingUserIDs, nil
 }
 
-func (r *relationshipRepository) GetAllFollowerIDsByUserID(ctx context.Context, userID string) ([]string, error) {
-	followerUserIDs := []string{}
+func (r *relationshipRepository) GetAllFollowerIDsByUserID(ctx context.Context, userID int) ([]int, error) {
+	followerUserIDs := []int{}
 	err := r.gormDB.
 		Table("following").
 		Where("target_user_id = ?", userID).
@@ -64,7 +64,7 @@ func (r *relationshipRepository) InsertFollowing(ctx context.Context, following 
 	return nil
 }
 
-func (r *relationshipRepository) DeleteFollowingByUserIDAndTargetID(ctx context.Context, userID, targetID string) error {
+func (r *relationshipRepository) DeleteFollowingByUserIDAndTargetID(ctx context.Context, userID, targetID int) error {
 	err := r.gormDB.
 		Table("following").
 		Where("user_id = ? AND target_user_id = ?", userID, targetID).

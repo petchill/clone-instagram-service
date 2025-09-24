@@ -38,6 +38,74 @@ func (_m *MockMediaRepository) EXPECT() *MockMediaRepository_Expecter {
 	return &MockMediaRepository_Expecter{mock: &_m.Mock}
 }
 
+// GetMediasByOwnerUserID provides a mock function for the type MockMediaRepository
+func (_mock *MockMediaRepository) GetMediasByOwnerUserID(ctx context.Context, ownerUserID int) ([]MediaMetaData, error) {
+	ret := _mock.Called(ctx, ownerUserID)
+
+	if len(ret) == 0 {
+		panic("no return value specified for GetMediasByOwnerUserID")
+	}
+
+	var r0 []MediaMetaData
+	var r1 error
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int) ([]MediaMetaData, error)); ok {
+		return returnFunc(ctx, ownerUserID)
+	}
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int) []MediaMetaData); ok {
+		r0 = returnFunc(ctx, ownerUserID)
+	} else {
+		if ret.Get(0) != nil {
+			r0 = ret.Get(0).([]MediaMetaData)
+		}
+	}
+	if returnFunc, ok := ret.Get(1).(func(context.Context, int) error); ok {
+		r1 = returnFunc(ctx, ownerUserID)
+	} else {
+		r1 = ret.Error(1)
+	}
+	return r0, r1
+}
+
+// MockMediaRepository_GetMediasByOwnerUserID_Call is a *mock.Call that shadows Run/Return methods with type explicit version for method 'GetMediasByOwnerUserID'
+type MockMediaRepository_GetMediasByOwnerUserID_Call struct {
+	*mock.Call
+}
+
+// GetMediasByOwnerUserID is a helper method to define mock.On call
+//   - ctx context.Context
+//   - ownerUserID int
+func (_e *MockMediaRepository_Expecter) GetMediasByOwnerUserID(ctx interface{}, ownerUserID interface{}) *MockMediaRepository_GetMediasByOwnerUserID_Call {
+	return &MockMediaRepository_GetMediasByOwnerUserID_Call{Call: _e.mock.On("GetMediasByOwnerUserID", ctx, ownerUserID)}
+}
+
+func (_c *MockMediaRepository_GetMediasByOwnerUserID_Call) Run(run func(ctx context.Context, ownerUserID int)) *MockMediaRepository_GetMediasByOwnerUserID_Call {
+	_c.Call.Run(func(args mock.Arguments) {
+		var arg0 context.Context
+		if args[0] != nil {
+			arg0 = args[0].(context.Context)
+		}
+		var arg1 int
+		if args[1] != nil {
+			arg1 = args[1].(int)
+		}
+		run(
+			arg0,
+			arg1,
+		)
+	})
+	return _c
+}
+
+func (_c *MockMediaRepository_GetMediasByOwnerUserID_Call) Return(mediaMetaDatas []MediaMetaData, err error) *MockMediaRepository_GetMediasByOwnerUserID_Call {
+	_c.Call.Return(mediaMetaDatas, err)
+	return _c
+}
+
+func (_c *MockMediaRepository_GetMediasByOwnerUserID_Call) RunAndReturn(run func(ctx context.Context, ownerUserID int) ([]MediaMetaData, error)) *MockMediaRepository_GetMediasByOwnerUserID_Call {
+	_c.Call.Return(run)
+	return _c
+}
+
 // InsertFileMetaData provides a mock function for the type MockMediaRepository
 func (_mock *MockMediaRepository) InsertFileMetaData(ctx context.Context, mediaMetaData MediaMetaData) error {
 	ret := _mock.Called(ctx, mediaMetaData)

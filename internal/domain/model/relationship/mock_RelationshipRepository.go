@@ -38,7 +38,7 @@ func (_m *MockRelationshipRepository) EXPECT() *MockRelationshipRepository_Expec
 }
 
 // DeleteFollowingByUserIDAndTargetID provides a mock function for the type MockRelationshipRepository
-func (_mock *MockRelationshipRepository) DeleteFollowingByUserIDAndTargetID(ctx context.Context, userID string, targetID string) error {
+func (_mock *MockRelationshipRepository) DeleteFollowingByUserIDAndTargetID(ctx context.Context, userID int, targetID int) error {
 	ret := _mock.Called(ctx, userID, targetID)
 
 	if len(ret) == 0 {
@@ -46,7 +46,7 @@ func (_mock *MockRelationshipRepository) DeleteFollowingByUserIDAndTargetID(ctx 
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string, string) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int, int) error); ok {
 		r0 = returnFunc(ctx, userID, targetID)
 	} else {
 		r0 = ret.Error(0)
@@ -61,25 +61,25 @@ type MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call struct {
 
 // DeleteFollowingByUserIDAndTargetID is a helper method to define mock.On call
 //   - ctx context.Context
-//   - userID string
-//   - targetID string
+//   - userID int
+//   - targetID int
 func (_e *MockRelationshipRepository_Expecter) DeleteFollowingByUserIDAndTargetID(ctx interface{}, userID interface{}, targetID interface{}) *MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call {
 	return &MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call{Call: _e.mock.On("DeleteFollowingByUserIDAndTargetID", ctx, userID, targetID)}
 }
 
-func (_c *MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call) Run(run func(ctx context.Context, userID string, targetID string)) *MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call {
+func (_c *MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call) Run(run func(ctx context.Context, userID int, targetID int)) *MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 string
+		var arg1 int
 		if args[1] != nil {
-			arg1 = args[1].(string)
+			arg1 = args[1].(int)
 		}
-		var arg2 string
+		var arg2 int
 		if args[2] != nil {
-			arg2 = args[2].(string)
+			arg2 = args[2].(int)
 		}
 		run(
 			arg0,
@@ -95,32 +95,32 @@ func (_c *MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call) Re
 	return _c
 }
 
-func (_c *MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call) RunAndReturn(run func(ctx context.Context, userID string, targetID string) error) *MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call {
+func (_c *MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call) RunAndReturn(run func(ctx context.Context, userID int, targetID int) error) *MockRelationshipRepository_DeleteFollowingByUserIDAndTargetID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetAllFollowerIDsByUserID provides a mock function for the type MockRelationshipRepository
-func (_mock *MockRelationshipRepository) GetAllFollowerIDsByUserID(ctx context.Context, userID string) ([]string, error) {
+func (_mock *MockRelationshipRepository) GetAllFollowerIDsByUserID(ctx context.Context, userID int) ([]int, error) {
 	ret := _mock.Called(ctx, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllFollowerIDsByUserID")
 	}
 
-	var r0 []string
+	var r0 []int
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int) ([]int, error)); ok {
 		return returnFunc(ctx, userID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int) []int); ok {
 		r0 = returnFunc(ctx, userID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
+			r0 = ret.Get(0).([]int)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, int) error); ok {
 		r1 = returnFunc(ctx, userID)
 	} else {
 		r1 = ret.Error(1)
@@ -135,20 +135,20 @@ type MockRelationshipRepository_GetAllFollowerIDsByUserID_Call struct {
 
 // GetAllFollowerIDsByUserID is a helper method to define mock.On call
 //   - ctx context.Context
-//   - userID string
+//   - userID int
 func (_e *MockRelationshipRepository_Expecter) GetAllFollowerIDsByUserID(ctx interface{}, userID interface{}) *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call {
 	return &MockRelationshipRepository_GetAllFollowerIDsByUserID_Call{Call: _e.mock.On("GetAllFollowerIDsByUserID", ctx, userID)}
 }
 
-func (_c *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call) Run(run func(ctx context.Context, userID string)) *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call {
+func (_c *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call) Run(run func(ctx context.Context, userID int)) *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 string
+		var arg1 int
 		if args[1] != nil {
-			arg1 = args[1].(string)
+			arg1 = args[1].(int)
 		}
 		run(
 			arg0,
@@ -158,37 +158,37 @@ func (_c *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call) Run(run fun
 	return _c
 }
 
-func (_c *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call) Return(strings []string, err error) *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call {
-	_c.Call.Return(strings, err)
+func (_c *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call) Return(ints []int, err error) *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call {
+	_c.Call.Return(ints, err)
 	return _c
 }
 
-func (_c *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call) RunAndReturn(run func(ctx context.Context, userID string) ([]string, error)) *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call {
+func (_c *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call) RunAndReturn(run func(ctx context.Context, userID int) ([]int, error)) *MockRelationshipRepository_GetAllFollowerIDsByUserID_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // GetAllFollowingIDsByUserID provides a mock function for the type MockRelationshipRepository
-func (_mock *MockRelationshipRepository) GetAllFollowingIDsByUserID(ctx context.Context, userID string) ([]string, error) {
+func (_mock *MockRelationshipRepository) GetAllFollowingIDsByUserID(ctx context.Context, userID int) ([]int, error) {
 	ret := _mock.Called(ctx, userID)
 
 	if len(ret) == 0 {
 		panic("no return value specified for GetAllFollowingIDsByUserID")
 	}
 
-	var r0 []string
+	var r0 []int
 	var r1 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) ([]string, error)); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int) ([]int, error)); ok {
 		return returnFunc(ctx, userID)
 	}
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string) []string); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int) []int); ok {
 		r0 = returnFunc(ctx, userID)
 	} else {
 		if ret.Get(0) != nil {
-			r0 = ret.Get(0).([]string)
+			r0 = ret.Get(0).([]int)
 		}
 	}
-	if returnFunc, ok := ret.Get(1).(func(context.Context, string) error); ok {
+	if returnFunc, ok := ret.Get(1).(func(context.Context, int) error); ok {
 		r1 = returnFunc(ctx, userID)
 	} else {
 		r1 = ret.Error(1)
@@ -203,20 +203,20 @@ type MockRelationshipRepository_GetAllFollowingIDsByUserID_Call struct {
 
 // GetAllFollowingIDsByUserID is a helper method to define mock.On call
 //   - ctx context.Context
-//   - userID string
+//   - userID int
 func (_e *MockRelationshipRepository_Expecter) GetAllFollowingIDsByUserID(ctx interface{}, userID interface{}) *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call {
 	return &MockRelationshipRepository_GetAllFollowingIDsByUserID_Call{Call: _e.mock.On("GetAllFollowingIDsByUserID", ctx, userID)}
 }
 
-func (_c *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call) Run(run func(ctx context.Context, userID string)) *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call {
+func (_c *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call) Run(run func(ctx context.Context, userID int)) *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 string
+		var arg1 int
 		if args[1] != nil {
-			arg1 = args[1].(string)
+			arg1 = args[1].(int)
 		}
 		run(
 			arg0,
@@ -226,12 +226,12 @@ func (_c *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call) Run(run fu
 	return _c
 }
 
-func (_c *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call) Return(strings []string, err error) *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call {
-	_c.Call.Return(strings, err)
+func (_c *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call) Return(ints []int, err error) *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call {
+	_c.Call.Return(ints, err)
 	return _c
 }
 
-func (_c *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call) RunAndReturn(run func(ctx context.Context, userID string) ([]string, error)) *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call {
+func (_c *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call) RunAndReturn(run func(ctx context.Context, userID int) ([]int, error)) *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call {
 	_c.Call.Return(run)
 	return _c
 }

@@ -17,8 +17,8 @@ type mockRepo struct {
 func Test_FollowUser(t *testing.T) {
 
 	type Args struct {
-		userID       string
-		targetUserID string
+		userID       int
+		targetUserID int
 	}
 
 	type TestCase struct {
@@ -32,25 +32,25 @@ func Test_FollowUser(t *testing.T) {
 		{
 			name: "[negative]_GivenUserIDIsAlreadyFollowTargetUserID_WhenUserIDTryToFollowAgain_ThenReturnErrorBecauseItIsAlreadyFollowed",
 			args: Args{
-				userID:       "1",
-				targetUserID: "2",
+				userID:       1,
+				targetUserID: 2,
 			},
 			beforeTest: func(mockRepo mockRepo) {
-				mockRepo.relationshipRepo.EXPECT().GetAllFollowingIDsByUserID(mock.Anything, "1").Return([]string{"2"}, nil)
+				mockRepo.relationshipRepo.EXPECT().GetAllFollowingIDsByUserID(mock.Anything, 1).Return([]int{2}, nil)
 			},
 			expectedErr: fmt.Errorf("this following is already exists"),
 		},
 		{
 			name: "[positive]_GivenUserIDNeverFollowTargetUserID_WhenUserIDTryToFollow_ThenRecordTheFollowingAndReturnSuccess",
 			args: Args{
-				userID:       "1",
-				targetUserID: "2",
+				userID:       1,
+				targetUserID: 2,
 			},
 			beforeTest: func(mockRepo mockRepo) {
-				mockRepo.relationshipRepo.EXPECT().GetAllFollowingIDsByUserID(mock.Anything, "1").Return([]string{}, nil)
+				mockRepo.relationshipRepo.EXPECT().GetAllFollowingIDsByUserID(mock.Anything, 2).Return([]int{}, nil)
 				mockRepo.relationshipRepo.EXPECT().InsertFollowing(mock.Anything, mRelationship.Following{
-					UserId:       "1",
-					TargetUserID: "2",
+					UserId:       1,
+					TargetUserID: 2,
 				}).Return(nil)
 			},
 			expectedErr: nil,
