@@ -4,7 +4,7 @@ import "time"
 
 type MediaMetaData struct {
 	ID              int `gorm:"omitempty"`
-	OwnerUserID     string
+	OwnerUserID     int
 	Caption         string
 	FileStorageLink string
 	CreatedAt       time.Time

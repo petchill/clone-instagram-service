@@ -90,7 +90,7 @@ func main() {
 	userRepo := _repo.NewUserRepository(db)
 	userService := _service.NewUserService(userRepo, authRepo)
 
-	authMiddleWare := _middleware.NewAuthMiddleWare(authRepo)
+	authMiddleWare := _middleware.NewAuthMiddleWare(authRepo, userRepo)
 
 	e := util.InitEchoApp()
 

@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	mMedia "clone-instagram-service/internal/domain/model/media"
+	eUser "clone-instagram-service/internal/domain/model/user/entity"
 
 	"github.com/labstack/echo/v4"
 )
@@ -25,16 +26,21 @@ func (h *mediaHandler) RegisterRoutes(e *echo.Group) {
 
 func (h *mediaHandler) PostMedia(c echo.Context) error {
 
-	user := c.Get("user")
+	user, ok := c.Get("user").(eUser.User)
+	if !ok {
+		c.JSON(http.StatusUnauthorized, "invalid user type")
+	}
 	fmt.Println(user)
 
 	file, err := c.FormFile("media") // "file" is the name of the input field in the HTML form
 	if err != nil {
+		fmt.Println("err ", err)
 		return err
 	}
 
 	src, err := file.Open()
 	if err != nil {
+		fmt.Println("err ", err)
 		return err
 	}
 
@@ -42,9 +48,10 @@ func (h *mediaHandler) PostMedia(c echo.Context) error {
 
 	ctx := c.Request().Context()
 
-	err = h.mediaService.CreateAndStoreMedia(ctx, "111", file.Filename, src, "hello1")
+	err = h.mediaService.CreateAndStoreMedia(ctx, user.ID, file.Filename, src, "hello1")
 	if err != nil {
 		fmt.Errorf("This is error", err)
+		fmt.Println("err ", err)
 		return c.JSON(500, map[string]string{"status": "ERROR"})
 	}
 	// // Destination

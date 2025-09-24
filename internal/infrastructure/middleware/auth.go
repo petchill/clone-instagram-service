@@ -15,9 +15,10 @@ type authMiddleware struct {
 	userRepo mUser.UserRepository
 }
 
-func NewAuthMiddleWare(authRepo mAuth.AuthRepository) *authMiddleware {
+func NewAuthMiddleWare(authRepo mAuth.AuthRepository, userRepo mUser.UserRepository) *authMiddleware {
 	return &authMiddleware{
 		authRepo: authRepo,
+		userRepo: userRepo,
 	}
 }
 

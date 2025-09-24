@@ -21,7 +21,7 @@ func NewMediaService(mediaRepo mMedia.MediaRepository) *mediaService {
 	}
 }
 
-func generateObjectKey(userID string, fileType string) string {
+func generateObjectKey(userID int, fileType string) string {
 	uuid := uuid.New()
 	return fmt.Sprintf("media/%s/%s%s", userID, uuid, fileType)
 }
@@ -29,7 +29,7 @@ func generateObjectKey(userID string, fileType string) string {
 // function to store media inti the DB included meta-data and file
 // 1. upload to file store
 // 2. get link from filestore and insert data to DB
-func (s *mediaService) CreateAndStoreMedia(ctx context.Context, userID string, fileName string, file multipart.File, caption string) error {
+func (s *mediaService) CreateAndStoreMedia(ctx context.Context, userID int, fileName string, file multipart.File, caption string) error {
 	mediaFileType := filepath.Ext(fileName)
 	objectKey := generateObjectKey(userID, mediaFileType)
 	link, err := s.mediaRepo.UploadFileToFileStorage(ctx, objectKey, file)

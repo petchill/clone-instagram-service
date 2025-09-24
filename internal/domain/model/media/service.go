@@ -6,5 +6,5 @@ import (
 )
 
 type MediaService interface {
-	CreateAndStoreMedia(ctx context.Context, userID string, fileName string, file multipart.File, caption string) error
+	CreateAndStoreMedia(ctx context.Context, userID int, fileName string, file multipart.File, caption string) error
 }
