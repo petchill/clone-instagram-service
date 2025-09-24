@@ -1,15 +1,19 @@
 package service
 
 import (
+	mAgg "clone-instagram-service/internal/domain/model/aggregate"
 	mAuth "clone-instagram-service/internal/domain/model/auth"
+	mMedia "clone-instagram-service/internal/domain/model/media"
 	mUser "clone-instagram-service/internal/domain/model/user"
+	eUser "clone-instagram-service/internal/domain/model/user/entity"
 	"context"
 	"fmt"
 )
 
 type userService struct {
-	userRepo mUser.UserRepository
-	authRepo mAuth.AuthRepository
+	userRepo  mUser.UserRepository
+	authRepo  mAuth.AuthRepository
+	mediaRepo mMedia.MediaRepository
 }
 
 func NewUserService(userRepo mUser.UserRepository, authRepo mAuth.AuthRepository) *userService {
@@ -37,10 +41,8 @@ func (s *userService) LoginWithGoogleAccessCode(ctx context.Context, googleAcces
 	if err != nil {
 		return mAuth.AccessCodeResponse{}, err
 	}
-	fmt.Println("user", user)
-	fmt.Println("exists", exists)
 	if !exists {
-		newUser := mUser.User{
+		newUser := eUser.User{
 			GoogleSubID: userInfo.Sub,
 			Name:        userInfo.Name,
 			GivenName:   userInfo.GivenName,
@@ -61,4 +63,42 @@ func (s *userService) LoginWithGoogleAccessCode(ctx context.Context, googleAcces
 		ExpiresIn:   3600, // 1 hour
 		UserInfo:    user,
 	}, nil
+}
+
+func (s *userService) GetUserProfileByGoogleSubID(ctx context.Context, googleSubID string) (mAgg.UserProfile, error) {
+	resp := mAgg.UserProfile{}
+	// get user from DB by googleSubID
+	user, exist, err := s.userRepo.GetUserByGoogleID(ctx, googleSubID)
+	if err != nil {
+		return resp, err
+	}
+	if !exist {
+		err = fmt.Errorf("user not found")
+		return resp, err
+	}
+
+	// get followers - all followers should have user info
+	followingUsers, err := s.userRepo.GetFollowingUsersByUserID(ctx, user.ID)
+	if err != nil {
+		return resp, err
+	}
+	// get followings - all followers should have user info
+	followerUsers, err := s.userRepo.GetFollowerUsersByUserID(ctx, user.ID)
+	if err != nil {
+		return resp, err
+	}
+	// get posts
+	posts, err := s.mediaRepo.GetMediasByOwnerUserID(ctx, user.ID)
+	if err != nil {
+		return resp, err
+	}
+
+	resp = mAgg.UserProfile{
+		User:       user,
+		Followers:  followerUsers,
+		Followings: followingUsers,
+		Posts:      posts,
+	}
+
+	return resp, nil
 }

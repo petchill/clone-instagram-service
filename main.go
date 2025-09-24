@@ -98,12 +98,15 @@ func main() {
 	healthCheckHandler := _infra.NewHealthCheckHandler()
 	authHandler := _handler.NewAuthHandler(authRepo, userService)
 	relationshipHandler := _handler.NewRelationshipHandler(relationshipService)
+	userHandler := _handler.NewUserHandler(userService)
 
+	publicRoute := e.Group("/public")
 	privateRoute := e.Group("/private")
 	privateRoute.Use(authMiddleWare.AuthWithUser)
 	mediaHandler.RegisterRoutes(privateRoute)
 	relationshipHandler.RegisterRoutes(privateRoute)
-	authHandler.RegisterRoutes(e)
+	userHandler.RegisterRoutes(privateRoute)
+	authHandler.RegisterRoutes(publicRoute)
 
 	e.GET("/health", healthCheckHandler.HealthCheck)
 

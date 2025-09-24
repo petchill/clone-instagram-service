@@ -20,7 +20,7 @@ func NewAuthHandler(authRepo mAuth.AuthRepository, userService mUser.UserService
 	return &authHandler{authRepo: authRepo, userService: userService}
 }
 
-func (h *authHandler) RegisterRoutes(e *echo.Echo) {
+func (h *authHandler) RegisterRoutes(e *echo.Group) {
 	e.POST("/auth/accessToken", h.PostAccessCode)
 	e.GET("/auth/user", h.GetUser)
 }

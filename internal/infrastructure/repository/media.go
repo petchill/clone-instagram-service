@@ -72,3 +72,16 @@ func (r *mediaRepository) InsertFileMetaData(ctx context.Context, mediaMetaData 
 	}
 	return nil
 }
+
+func (r *mediaRepository) GetMediasByOwnerUserID(ctx context.Context, ownerUserID int) ([]mMedia.MediaMetaData, error) {
+	medias := []mMedia.MediaMetaData{}
+	err := r.gormDB.
+		Table("media").
+		Where("owner_user_id = ?", ownerUserID).
+		Find(&medias).Error
+	if err != nil {
+		log.Printf("Error while getting medias from database. Here's why: %v\n", err)
+		return medias, err
+	}
+	return medias, nil
+}
