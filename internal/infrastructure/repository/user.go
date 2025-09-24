@@ -44,7 +44,7 @@ func (r *userRepository) GetFollowingUsersByUserID(ctx context.Context, userID i
 	followingUsers := []eUser.User{}
 	err := r.gormDB.
 		Table("user").
-		Joins("JOIN following ON user.id = following.target_user_id").
+		Joins(`JOIN following ON "user".id = following.target_user_id`).
 		Where("following.user_id = ?", userID).
 		Find(&followingUsers).Error
 	if err != nil {
@@ -58,7 +58,7 @@ func (r *userRepository) GetFollowerUsersByUserID(ctx context.Context, userID in
 	followerUsers := []eUser.User{}
 	err := r.gormDB.
 		Table("user").
-		Joins("JOIN following ON user.id = following.user_id").
+		Joins(`JOIN following ON "user".id = following.user_id`).
 		Where("following.target_user_id = ?", userID).
 		Find(&followerUsers).Error
 	if err != nil {

@@ -16,10 +16,11 @@ type userService struct {
 	mediaRepo mMedia.MediaRepository
 }
 
-func NewUserService(userRepo mUser.UserRepository, authRepo mAuth.AuthRepository) *userService {
+func NewUserService(userRepo mUser.UserRepository, authRepo mAuth.AuthRepository, mediaRepo mMedia.MediaRepository) *userService {
 	return &userService{
-		userRepo: userRepo,
-		authRepo: authRepo,
+		userRepo:  userRepo,
+		authRepo:  authRepo,
+		mediaRepo: mediaRepo,
 	}
 }
 

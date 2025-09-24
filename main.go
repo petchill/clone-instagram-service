@@ -88,7 +88,7 @@ func main() {
 	authRepo := _repo.NewAuthRepository(oauthConfig)
 
 	userRepo := _repo.NewUserRepository(db)
-	userService := _service.NewUserService(userRepo, authRepo)
+	userService := _service.NewUserService(userRepo, authRepo, mediaRepo)
 
 	authMiddleWare := _middleware.NewAuthMiddleWare(authRepo, userRepo)
 

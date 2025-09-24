@@ -23,7 +23,7 @@ func NewMediaService(mediaRepo mMedia.MediaRepository) *mediaService {
 
 func generateObjectKey(userID int, fileType string) string {
 	uuid := uuid.New()
-	return fmt.Sprintf("media/%s/%s%s", userID, uuid, fileType)
+	return fmt.Sprintf("media/%v/%s%s", userID, uuid, fileType)
 }
 
 // function to store media inti the DB included meta-data and file
