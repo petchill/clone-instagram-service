@@ -6,6 +6,7 @@ import (
 	_infra "clone-instagram-service/internal/infrastructure"
 	_handler "clone-instagram-service/internal/infrastructure/handler"
 	_repo "clone-instagram-service/internal/infrastructure/repository"
+	_subscriber "clone-instagram-service/internal/infrastructure/subscriber"
 	"clone-instagram-service/internal/util"
 	"context"
 	"log"
@@ -79,23 +80,34 @@ func main() {
 	// Initialize S3 client
 	s3Client := s3.NewFromConfig(cfg)
 
+	// repository
+
 	mediaRepo := _repo.NewMediaRepository(awsConfig, s3Client, db)
-	mediaService := _service.NewMediaService(mediaRepo)
-
 	relationshipRepo := _repo.NewRelationshipRepository(db, kafkaConfig)
-	relationshipService := _service.NewRelationshipService(relationshipRepo)
-
 	authRepo := _repo.NewAuthRepository(oauthConfig)
-
 	userRepo := _repo.NewUserRepository(db)
-	userService := _service.NewUserService(userRepo, authRepo, mediaRepo)
-
 	notificationRepo := _repo.NewNotificationRepository(db)
-	notificationService := _service.NewNotificationService(notificationRepo)
+
+	//service
+	mediaService := _service.NewMediaService(mediaRepo)
+	relationshipService := _service.NewRelationshipService(relationshipRepo)
+	userService := _service.NewUserService(userRepo, authRepo, mediaRepo)
+	notificationService := _service.NewNotificationService(notificationRepo, userRepo)
+
+	// middleware
 
 	authMiddleWare := _middleware.NewAuthMiddleWare(authRepo, userRepo)
 
+	// subscriber
+
+	notificationSubscriber := _subscriber.NewNotificationSubscriber(kafkaConfig)
+
+	notificationSubscriber.SubscribeFollowing(notificationService.SubscribeFollowing)
+
+	// handler
 	e := util.InitEchoApp()
+	publicRoute := e.Group("/public")
+	privateRoute := e.Group("/private")
 
 	mediaHandler := _handler.NewMediaHandler(mediaService)
 	healthCheckHandler := _infra.NewHealthCheckHandler()
@@ -103,17 +115,12 @@ func main() {
 	relationshipHandler := _handler.NewRelationshipHandler(relationshipService)
 	userHandler := _handler.NewUserHandler(userService)
 	notificationHandler := _handler.NewNotificationHandler(notificationService)
-
-	publicRoute := e.Group("/public")
-	privateRoute := e.Group("/private")
 	privateRoute.Use(authMiddleWare.AuthWithUser)
 	mediaHandler.RegisterRoutes(privateRoute)
 	relationshipHandler.RegisterRoutes(privateRoute)
 	userHandler.RegisterRoutes(privateRoute)
 	authHandler.RegisterRoutes(publicRoute)
 	notificationHandler.RegisterRoutes(privateRoute)
-
 	e.GET("/health", healthCheckHandler.HealthCheck)
-
 	e.Logger.Fatal(e.Start(":5000"))
 }

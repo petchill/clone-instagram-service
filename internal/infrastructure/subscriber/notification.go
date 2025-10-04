@@ -21,7 +21,7 @@ func NewNotificationSubscriber(kafkaConfig model.KafkaConfig) *notificationSubsc
 	}
 }
 
-func (sub *notificationSubscriber) SubscriberFollowing(callback func(ctx context.Context, message eRela.FollowingTopicMessage) error) error {
+func (sub *notificationSubscriber) SubscribeFollowing(callback func(ctx context.Context, message eRela.FollowingTopicMessage) error) error {
 	topic := "following"
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:        sub.kafkaConfig.Brokers,
