@@ -65,7 +65,7 @@ func (r *mediaRepository) UploadFileToFileStorage(ctx context.Context, objectKey
 }
 
 func (r *mediaRepository) InsertFileMetaData(ctx context.Context, mediaMetaData mMedia.MediaMetaData) error {
-	err := r.gormDB.Table("media").Create(&mediaMetaData).Error
+	err := r.gormDB.Table("medias").Create(&mediaMetaData).Error
 	if err != nil {
 		log.Printf("Error while inserting media metadata into database. Here's why: %v\n", err)
 		return err
@@ -76,7 +76,7 @@ func (r *mediaRepository) InsertFileMetaData(ctx context.Context, mediaMetaData 
 func (r *mediaRepository) GetMediasByOwnerUserID(ctx context.Context, ownerUserID int) ([]mMedia.MediaMetaData, error) {
 	medias := []mMedia.MediaMetaData{}
 	err := r.gormDB.
-		Table("media").
+		Table("medias").
 		Where("owner_user_id = ?", ownerUserID).
 		Find(&medias).Error
 	if err != nil {

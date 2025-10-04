@@ -19,7 +19,7 @@ func NewUserRepository(gormDB *gorm.DB) *userRepository {
 
 func (r *userRepository) GetUserByGoogleID(ctx context.Context, googleID string) (eUser.User, bool, error) {
 	user := eUser.User{}
-	err := r.gormDB.Table("user").First(&user, "google_sub_id = ?", googleID).Error
+	err := r.gormDB.Table("users").First(&user, "google_sub_id = ?", googleID).Error
 	if err != nil {
 		fmt.Println("error finding user by google id:", err)
 		if err == gorm.ErrRecordNotFound {
@@ -32,7 +32,7 @@ func (r *userRepository) GetUserByGoogleID(ctx context.Context, googleID string)
 }
 
 func (r *userRepository) InsertUser(ctx context.Context, user eUser.User) error {
-	err := r.gormDB.Table("user").Create(&user).Error
+	err := r.gormDB.Table("users").Create(&user).Error
 	if err != nil {
 		log.Println("error inserting user:", err)
 		return err
@@ -43,9 +43,9 @@ func (r *userRepository) InsertUser(ctx context.Context, user eUser.User) error 
 func (r *userRepository) GetFollowingUsersByUserID(ctx context.Context, userID int) ([]eUser.User, error) {
 	followingUsers := []eUser.User{}
 	err := r.gormDB.
-		Table("user").
-		Joins(`JOIN following ON "user".id = following.target_user_id`).
-		Where("following.user_id = ?", userID).
+		Table("users").
+		Joins(`JOIN followings ON users.id = followings.target_user_id`).
+		Where("followings.user_id = ?", userID).
 		Find(&followingUsers).Error
 	if err != nil {
 		log.Printf("Error while getting following users from database. Here's why: %v\n", err)
@@ -57,9 +57,9 @@ func (r *userRepository) GetFollowingUsersByUserID(ctx context.Context, userID i
 func (r *userRepository) GetFollowerUsersByUserID(ctx context.Context, userID int) ([]eUser.User, error) {
 	followerUsers := []eUser.User{}
 	err := r.gormDB.
-		Table("user").
-		Joins(`JOIN following ON "user".id = following.user_id`).
-		Where("following.target_user_id = ?", userID).
+		Table("users").
+		Joins(`JOIN followings ON users.id = followings.user_id`).
+		Where("followings.target_user_id = ?", userID).
 		Find(&followerUsers).Error
 	if err != nil {
 		log.Printf("Error while getting follower users from database. Here's why: %v\n", err)

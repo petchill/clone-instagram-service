@@ -18,7 +18,7 @@ func NewNotificationRepository(gormDB *gorm.DB) *notificationRepository {
 }
 
 func (r *notificationRepository) InsertNotification(ctx context.Context, notification eNoti.Notification) error {
-	err := r.gormDB.Table("notification").Create(&notification).Error
+	err := r.gormDB.Table("notifications").Create(&notification).Error
 	if err != nil {
 		return err
 	}
@@ -26,10 +26,9 @@ func (r *notificationRepository) InsertNotification(ctx context.Context, notific
 }
 
 func (r *notificationRepository) GetAllNotificationsByUserID(ctx context.Context, userID int) ([]eNoti.Notification, error) {
-
 	notifications := []eNoti.Notification{}
 	err := r.gormDB.
-		Table("notification").
+		Table("notifications").
 		Where("owner_user_id = ?", userID).
 		Order("created_at DESC").
 		Find(&notifications).Error
@@ -51,7 +50,7 @@ func (r *notificationRepository) GetNotficationByID(ctx context.Context, notific
 	return notification, true, nil
 }
 func (r *notificationRepository) MarkAllNotificationsAsReadByUserID(ctx context.Context, userID int) error {
-	err := r.gormDB.Table("notification").
+	err := r.gormDB.Table("notifications").
 		Where("owner_user_id = ?", userID).
 		Update("is_read", true).Error
 	if err != nil {

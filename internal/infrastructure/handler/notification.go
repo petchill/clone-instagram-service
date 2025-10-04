@@ -2,6 +2,7 @@ package handler
 
 import (
 	mNoti "clone-instagram-service/internal/domain/model/notification"
+	eNoti "clone-instagram-service/internal/domain/model/notification/entity"
 	eUser "clone-instagram-service/internal/domain/model/user/entity"
 	"net/http"
 
@@ -36,7 +37,10 @@ func (h *notificationHandler) GetAllNotifications(c echo.Context) error {
 		return nil
 	}
 
-	return c.JSON(http.StatusOK, notifications)
+	res := []eNoti.NotificationResponse{}
+	res = append(res, notifications...)
+
+	return c.JSON(http.StatusOK, res)
 }
 
 // MarkAllAsRead godoc
