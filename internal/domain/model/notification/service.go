@@ -6,6 +6,6 @@ import (
 )
 
 type NotificationService interface {
-	GetAllNotificationsByUserID(ctx context.Context, userID int) ([]eNoti.Notification, error)
+	GetAllNotificationsByUserID(ctx context.Context, userID int) ([]eNoti.NotificationResponse, error)
 	MarkAllNotificationsAsReadByUserID(ctx context.Context, userID int) error
 }
