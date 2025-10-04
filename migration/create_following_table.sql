@@ -1,4 +1,4 @@
-create table if not exists following (
+create table if not exists followings (
 	id SERIAL primary key,
 	user_id INT not null references "user"(id) on delete cascade,
 	target_user_id INT not null references "user"(id) on delete cascade,

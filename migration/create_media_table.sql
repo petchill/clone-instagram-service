@@ -1,4 +1,4 @@
-CREATE TABLE IF NOT EXISTS media (
+CREATE TABLE IF NOT EXISTS medias (
 	id SERIAL PRIMARY KEY,
 	owner_user_id INT not null references "user"(id) on delete cascade,
 	caption VARCHAR(255),
