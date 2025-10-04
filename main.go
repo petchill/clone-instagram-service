@@ -101,7 +101,6 @@ func main() {
 	// subscriber
 
 	notificationSubscriber := _subscriber.NewNotificationSubscriber(kafkaConfig)
-
 	notificationSubscriber.SubscribeFollowing(notificationService.SubscribeFollowing)
 
 	// handler

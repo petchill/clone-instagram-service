@@ -5,8 +5,8 @@ import (
 	eRela "clone-instagram-service/internal/domain/model/relationship/entity"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
-	"time"
 
 	"github.com/segmentio/kafka-go"
 )
@@ -22,19 +22,21 @@ func NewNotificationSubscriber(kafkaConfig model.KafkaConfig) *notificationSubsc
 }
 
 func (sub *notificationSubscriber) SubscribeFollowing(callback func(ctx context.Context, message eRela.FollowingTopicMessage) error) error {
-	topic := "following"
-	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers:        sub.kafkaConfig.Brokers,
-		Topic:          topic,
-		StartOffset:    kafka.FirstOffset, // Start at newest if no committed offset
-		CommitInterval: time.Second,       // auto-commit interval
-	})
-	defer r.Close()
-
 	go func() {
+		topic := "following"
+		fmt.Println("Starting Kafka consumer for topic:", topic)
+		r := kafka.NewReader(kafka.ReaderConfig{
+			Brokers:        sub.kafkaConfig.Brokers,
+			Topic:          topic,
+			GroupID:        "notification-group",
+			StartOffset:    kafka.LastOffset, // Start at newest if no committed offset
+			CommitInterval: 0,                // auto-commit interval
+		})
+		defer r.Close()
 		for {
 			m, err := r.ReadMessage(context.Background())
 			if err != nil {
+				log.Printf("Error reading message: %v", err)
 				continue
 			}
 

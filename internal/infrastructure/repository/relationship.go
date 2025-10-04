@@ -89,6 +89,7 @@ func (r *relationshipRepository) PublishFollowingTopic(ctx context.Context, mess
 			Value: messageJson,
 		},
 	)
+
 	if err != nil {
 		log.Println("Error from publish message in topic following")
 		return err
