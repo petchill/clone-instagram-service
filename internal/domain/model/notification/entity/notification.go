@@ -3,10 +3,10 @@ package entity
 import "time"
 
 type Notification struct {
-	ID          int
-	Type        string
-	Message     string
-	OwnerUserID int
-	IsRead      bool
-	CreatedAt   time.Time
+	ID          int       `gorm:"omitempty"`
+	Type        string    `gorm:"type"`
+	Message     string    `gorm:"message"`
+	OwnerUserID int       `gorm:"owner_user_id"`
+	IsRead      bool      `gorm:"is_read"`
+	CreatedAt   time.Time `gorm:"created_at"`
 }

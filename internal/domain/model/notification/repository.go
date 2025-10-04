@@ -8,6 +8,6 @@ import (
 type NotificationRepository interface {
 	InsertNotification(ctx context.Context, notification eNoti.Notification) error
 	GetAllNotificationsByUserID(ctx context.Context, userID int) ([]eNoti.Notification, error)
-	GetNotficationByID(ctx context.Context, notificationID int) (eNoti.Notification, error)
+	GetNotficationByID(ctx context.Context, notificationID int) (eNoti.Notification, bool, error)
 	MarkAllNotificationsAsReadByUserID(ctx context.Context, userID int) error
 }
