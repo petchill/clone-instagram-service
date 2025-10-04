@@ -2,6 +2,7 @@ package service
 
 import (
 	mRelationship "clone-instagram-service/internal/domain/model/relationship"
+	eRela "clone-instagram-service/internal/domain/model/relationship/entity"
 	"context"
 	"fmt"
 	"testing"
@@ -48,7 +49,7 @@ func Test_FollowUser(t *testing.T) {
 			},
 			beforeTest: func(mockRepo mockRepo) {
 				mockRepo.relationshipRepo.EXPECT().GetAllFollowingIDsByUserID(mock.Anything, 2).Return([]int{}, nil)
-				mockRepo.relationshipRepo.EXPECT().InsertFollowing(mock.Anything, mRelationship.Following{
+				mockRepo.relationshipRepo.EXPECT().InsertFollowing(mock.Anything, eRela.Following{
 					UserId:       1,
 					TargetUserID: 2,
 				}).Return(nil)

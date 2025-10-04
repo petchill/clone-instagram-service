@@ -2,7 +2,7 @@ package repository
 
 import (
 	"clone-instagram-service/internal/domain/model"
-	mRelationship "clone-instagram-service/internal/domain/model/relationship"
+	eRela "clone-instagram-service/internal/domain/model/relationship/entity"
 	"context"
 	"encoding/json"
 	"log"
@@ -55,7 +55,7 @@ func (r *relationshipRepository) GetAllFollowerIDsByUserID(ctx context.Context, 
 	return followerUserIDs, nil
 }
 
-func (r *relationshipRepository) InsertFollowing(ctx context.Context, following mRelationship.Following) error {
+func (r *relationshipRepository) InsertFollowing(ctx context.Context, following eRela.Following) error {
 	err := r.gormDB.Table("followings").Create(&following).Error
 	if err != nil {
 		log.Printf("Error while inserting following into database. Here's why: %v\n", err)
@@ -68,7 +68,7 @@ func (r *relationshipRepository) DeleteFollowingByUserIDAndTargetID(ctx context.
 	err := r.gormDB.
 		Table("followings").
 		Where("user_id = ? AND target_user_id = ?", userID, targetID).
-		Delete(&mRelationship.Following{}).Error
+		Delete(&eRela.Following{}).Error
 	if err != nil {
 		log.Printf("Error while deleting following from database. Here's why: %v\n", err)
 		return err
@@ -76,7 +76,7 @@ func (r *relationshipRepository) DeleteFollowingByUserIDAndTargetID(ctx context.
 	return nil
 }
 
-func (r *relationshipRepository) PublishFollowingTopic(ctx context.Context, message mRelationship.FollowingTopicMessage) error {
+func (r *relationshipRepository) PublishFollowingTopic(ctx context.Context, message eRela.FollowingTopicMessage) error {
 
 	messageJson, err := json.Marshal(message)
 	if err != nil {

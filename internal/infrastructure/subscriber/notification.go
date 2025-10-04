@@ -2,7 +2,7 @@ package subscriber
 
 import (
 	"clone-instagram-service/internal/domain/model"
-	mRela "clone-instagram-service/internal/domain/model/relationship"
+	eRela "clone-instagram-service/internal/domain/model/relationship/entity"
 	"context"
 	"encoding/json"
 	"log"
@@ -21,7 +21,7 @@ func NewNotificationSubscriber(kafkaConfig model.KafkaConfig) *notificationSubsc
 	}
 }
 
-func (sub *notificationSubscriber) SubscriberFollowing(callback func(ctx context.Context, message mRela.FollowingTopicMessage) error) error {
+func (sub *notificationSubscriber) SubscriberFollowing(callback func(ctx context.Context, message eRela.FollowingTopicMessage) error) error {
 	topic := "following"
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:        sub.kafkaConfig.Brokers,
@@ -40,7 +40,7 @@ func (sub *notificationSubscriber) SubscriberFollowing(callback func(ctx context
 
 			log.Printf("[partition=%d offset=%d] key=%s value=%s", m.Partition, m.Offset, string(m.Key), string(m.Value))
 			// Process the message
-			var message mRela.FollowingTopicMessage
+			var message eRela.FollowingTopicMessage
 			err = json.Unmarshal(m.Value, &message) // Uncomment this line when the struct is filled
 			if err != nil {
 				log.Printf("Error unmarshaling message: %v", err)

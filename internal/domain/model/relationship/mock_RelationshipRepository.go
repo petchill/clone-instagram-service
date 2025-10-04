@@ -5,6 +5,7 @@
 package relationship
 
 import (
+	"clone-instagram-service/internal/domain/model/relationship/entity"
 	"context"
 
 	mock "github.com/stretchr/testify/mock"
@@ -237,7 +238,7 @@ func (_c *MockRelationshipRepository_GetAllFollowingIDsByUserID_Call) RunAndRetu
 }
 
 // InsertFollowing provides a mock function for the type MockRelationshipRepository
-func (_mock *MockRelationshipRepository) InsertFollowing(ctx context.Context, following Following) error {
+func (_mock *MockRelationshipRepository) InsertFollowing(ctx context.Context, following relationship.Following) error {
 	ret := _mock.Called(ctx, following)
 
 	if len(ret) == 0 {
@@ -245,7 +246,7 @@ func (_mock *MockRelationshipRepository) InsertFollowing(ctx context.Context, fo
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, Following) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, relationship.Following) error); ok {
 		r0 = returnFunc(ctx, following)
 	} else {
 		r0 = ret.Error(0)
@@ -260,20 +261,20 @@ type MockRelationshipRepository_InsertFollowing_Call struct {
 
 // InsertFollowing is a helper method to define mock.On call
 //   - ctx context.Context
-//   - following Following
+//   - following relationship.Following
 func (_e *MockRelationshipRepository_Expecter) InsertFollowing(ctx interface{}, following interface{}) *MockRelationshipRepository_InsertFollowing_Call {
 	return &MockRelationshipRepository_InsertFollowing_Call{Call: _e.mock.On("InsertFollowing", ctx, following)}
 }
 
-func (_c *MockRelationshipRepository_InsertFollowing_Call) Run(run func(ctx context.Context, following Following)) *MockRelationshipRepository_InsertFollowing_Call {
+func (_c *MockRelationshipRepository_InsertFollowing_Call) Run(run func(ctx context.Context, following relationship.Following)) *MockRelationshipRepository_InsertFollowing_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 Following
+		var arg1 relationship.Following
 		if args[1] != nil {
-			arg1 = args[1].(Following)
+			arg1 = args[1].(relationship.Following)
 		}
 		run(
 			arg0,
@@ -288,13 +289,13 @@ func (_c *MockRelationshipRepository_InsertFollowing_Call) Return(err error) *Mo
 	return _c
 }
 
-func (_c *MockRelationshipRepository_InsertFollowing_Call) RunAndReturn(run func(ctx context.Context, following Following) error) *MockRelationshipRepository_InsertFollowing_Call {
+func (_c *MockRelationshipRepository_InsertFollowing_Call) RunAndReturn(run func(ctx context.Context, following relationship.Following) error) *MockRelationshipRepository_InsertFollowing_Call {
 	_c.Call.Return(run)
 	return _c
 }
 
 // PublishFollowingTopic provides a mock function for the type MockRelationshipRepository
-func (_mock *MockRelationshipRepository) PublishFollowingTopic(ctx context.Context, message FollowingTopicMessage) error {
+func (_mock *MockRelationshipRepository) PublishFollowingTopic(ctx context.Context, message relationship.FollowingTopicMessage) error {
 	ret := _mock.Called(ctx, message)
 
 	if len(ret) == 0 {
@@ -302,7 +303,7 @@ func (_mock *MockRelationshipRepository) PublishFollowingTopic(ctx context.Conte
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, FollowingTopicMessage) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, relationship.FollowingTopicMessage) error); ok {
 		r0 = returnFunc(ctx, message)
 	} else {
 		r0 = ret.Error(0)
@@ -317,20 +318,20 @@ type MockRelationshipRepository_PublishFollowingTopic_Call struct {
 
 // PublishFollowingTopic is a helper method to define mock.On call
 //   - ctx context.Context
-//   - message FollowingTopicMessage
+//   - message relationship.FollowingTopicMessage
 func (_e *MockRelationshipRepository_Expecter) PublishFollowingTopic(ctx interface{}, message interface{}) *MockRelationshipRepository_PublishFollowingTopic_Call {
 	return &MockRelationshipRepository_PublishFollowingTopic_Call{Call: _e.mock.On("PublishFollowingTopic", ctx, message)}
 }
 
-func (_c *MockRelationshipRepository_PublishFollowingTopic_Call) Run(run func(ctx context.Context, message FollowingTopicMessage)) *MockRelationshipRepository_PublishFollowingTopic_Call {
+func (_c *MockRelationshipRepository_PublishFollowingTopic_Call) Run(run func(ctx context.Context, message relationship.FollowingTopicMessage)) *MockRelationshipRepository_PublishFollowingTopic_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 FollowingTopicMessage
+		var arg1 relationship.FollowingTopicMessage
 		if args[1] != nil {
-			arg1 = args[1].(FollowingTopicMessage)
+			arg1 = args[1].(relationship.FollowingTopicMessage)
 		}
 		run(
 			arg0,
@@ -345,7 +346,7 @@ func (_c *MockRelationshipRepository_PublishFollowingTopic_Call) Return(err erro
 	return _c
 }
 
-func (_c *MockRelationshipRepository_PublishFollowingTopic_Call) RunAndReturn(run func(ctx context.Context, message FollowingTopicMessage) error) *MockRelationshipRepository_PublishFollowingTopic_Call {
+func (_c *MockRelationshipRepository_PublishFollowingTopic_Call) RunAndReturn(run func(ctx context.Context, message relationship.FollowingTopicMessage) error) *MockRelationshipRepository_PublishFollowingTopic_Call {
 	_c.Call.Return(run)
 	return _c
 }

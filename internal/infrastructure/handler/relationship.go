@@ -2,6 +2,7 @@ package handler
 
 import (
 	mRela "clone-instagram-service/internal/domain/model/relationship"
+	eRela "clone-instagram-service/internal/domain/model/relationship/entity"
 	eUser "clone-instagram-service/internal/domain/model/user/entity"
 	"net/http"
 
@@ -32,7 +33,7 @@ func (h *relationshipHandler) PostFollow(c echo.Context) error {
 		c.JSON(http.StatusUnauthorized, "invalid user type")
 	}
 
-	followPayload := mRela.PostFollowRequestBody{}
+	followPayload := eRela.PostFollowRequestBody{}
 
 	err := c.Bind(&followPayload)
 	if err != nil {
@@ -40,7 +41,7 @@ func (h *relationshipHandler) PostFollow(c echo.Context) error {
 		return nil
 	}
 
-	err = h.relationshipService.FollowUser(ctx, user.ID, followPayload.TargetID)
+	err = h.relationshipService.FollowUser(ctx, user.ID, followPayload.TargetUserID)
 
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, map[string]string{"status": "ERROR", "error": err.Error()})

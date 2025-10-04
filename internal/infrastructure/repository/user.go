@@ -67,3 +67,17 @@ func (r *userRepository) GetFollowerUsersByUserID(ctx context.Context, userID in
 	}
 	return followerUsers, nil
 }
+
+func (r *userRepository) GetUserByID(ctx context.Context, userID int) (eUser.User, bool, error) {
+	user := eUser.User{}
+	err := r.gormDB.Table("users").First(&user, "id = ?", userID).Error
+	if err != nil {
+		fmt.Println("error finding user by id:", err)
+		if err == gorm.ErrRecordNotFound {
+			return eUser.User{}, false, nil
+		}
+		log.Println("error finding user by id:", err)
+		return eUser.User{}, false, err
+	}
+	return user, true, nil
+}

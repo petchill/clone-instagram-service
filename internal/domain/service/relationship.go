@@ -2,6 +2,7 @@ package service
 
 import (
 	mRelationship "clone-instagram-service/internal/domain/model/relationship"
+	eRela "clone-instagram-service/internal/domain/model/relationship/entity"
 	"context"
 	"fmt"
 	"log"
@@ -32,7 +33,7 @@ func (s *relationshipService) FollowUser(ctx context.Context, userID int, target
 		return err
 	}
 
-	err = s.relationshipRepo.InsertFollowing(ctx, mRelationship.Following{
+	err = s.relationshipRepo.InsertFollowing(ctx, eRela.Following{
 		UserId:       userID,
 		TargetUserID: targetUserID,
 	})
@@ -41,10 +42,10 @@ func (s *relationshipService) FollowUser(ctx context.Context, userID int, target
 		return err
 	}
 
-	topicMessage := mRelationship.FollowingTopicMessage{
-		UserID:    userID,
-		TargetID:  targetUserID,
-		CreatedAt: time.Now(),
+	topicMessage := eRela.FollowingTopicMessage{
+		UserID:       userID,
+		TargetUserID: targetUserID,
+		CreatedAt:    time.Now(),
 	}
 
 	err = s.relationshipRepo.PublishFollowingTopic(ctx, topicMessage)

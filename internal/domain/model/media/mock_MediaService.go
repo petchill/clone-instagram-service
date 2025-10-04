@@ -39,7 +39,7 @@ func (_m *MockMediaService) EXPECT() *MockMediaService_Expecter {
 }
 
 // CreateAndStoreMedia provides a mock function for the type MockMediaService
-func (_mock *MockMediaService) CreateAndStoreMedia(ctx context.Context, userID string, fileName string, file multipart.File, caption string) error {
+func (_mock *MockMediaService) CreateAndStoreMedia(ctx context.Context, userID int, fileName string, file multipart.File, caption string) error {
 	ret := _mock.Called(ctx, userID, fileName, file, caption)
 
 	if len(ret) == 0 {
@@ -47,7 +47,7 @@ func (_mock *MockMediaService) CreateAndStoreMedia(ctx context.Context, userID s
 	}
 
 	var r0 error
-	if returnFunc, ok := ret.Get(0).(func(context.Context, string, string, multipart.File, string) error); ok {
+	if returnFunc, ok := ret.Get(0).(func(context.Context, int, string, multipart.File, string) error); ok {
 		r0 = returnFunc(ctx, userID, fileName, file, caption)
 	} else {
 		r0 = ret.Error(0)
@@ -62,7 +62,7 @@ type MockMediaService_CreateAndStoreMedia_Call struct {
 
 // CreateAndStoreMedia is a helper method to define mock.On call
 //   - ctx context.Context
-//   - userID string
+//   - userID int
 //   - fileName string
 //   - file multipart.File
 //   - caption string
@@ -70,15 +70,15 @@ func (_e *MockMediaService_Expecter) CreateAndStoreMedia(ctx interface{}, userID
 	return &MockMediaService_CreateAndStoreMedia_Call{Call: _e.mock.On("CreateAndStoreMedia", ctx, userID, fileName, file, caption)}
 }
 
-func (_c *MockMediaService_CreateAndStoreMedia_Call) Run(run func(ctx context.Context, userID string, fileName string, file multipart.File, caption string)) *MockMediaService_CreateAndStoreMedia_Call {
+func (_c *MockMediaService_CreateAndStoreMedia_Call) Run(run func(ctx context.Context, userID int, fileName string, file multipart.File, caption string)) *MockMediaService_CreateAndStoreMedia_Call {
 	_c.Call.Run(func(args mock.Arguments) {
 		var arg0 context.Context
 		if args[0] != nil {
 			arg0 = args[0].(context.Context)
 		}
-		var arg1 string
+		var arg1 int
 		if args[1] != nil {
-			arg1 = args[1].(string)
+			arg1 = args[1].(int)
 		}
 		var arg2 string
 		if args[2] != nil {
@@ -108,7 +108,7 @@ func (_c *MockMediaService_CreateAndStoreMedia_Call) Return(err error) *MockMedi
 	return _c
 }
 
-func (_c *MockMediaService_CreateAndStoreMedia_Call) RunAndReturn(run func(ctx context.Context, userID string, fileName string, file multipart.File, caption string) error) *MockMediaService_CreateAndStoreMedia_Call {
+func (_c *MockMediaService_CreateAndStoreMedia_Call) RunAndReturn(run func(ctx context.Context, userID int, fileName string, file multipart.File, caption string) error) *MockMediaService_CreateAndStoreMedia_Call {
 	_c.Call.Return(run)
 	return _c
 }

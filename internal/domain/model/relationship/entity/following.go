@@ -10,11 +10,11 @@ type Following struct {
 }
 
 type PostFollowRequestBody struct {
-	TargetID int `json:"target_id"`
+	TargetUserID int `json:"target_user_id"`
 }
 
 type FollowingTopicMessage struct {
-	UserID    int       `json:"user_id"`
-	TargetID  int       `json:"target_id"`
-	CreatedAt time.Time `json:"created_at"`
+	UserID       int       `json:"user_id"`
+	TargetUserID int       `json:"target_user_id"`
+	CreatedAt    time.Time `json:"created_at"`
 }
