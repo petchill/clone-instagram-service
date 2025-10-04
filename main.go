@@ -90,6 +90,9 @@ func main() {
 	userRepo := _repo.NewUserRepository(db)
 	userService := _service.NewUserService(userRepo, authRepo, mediaRepo)
 
+	notificationRepo := _repo.NewNotificationRepository(db)
+	notificationService := _service.NewNotificationService(notificationRepo)
+
 	authMiddleWare := _middleware.NewAuthMiddleWare(authRepo, userRepo)
 
 	e := util.InitEchoApp()
@@ -99,6 +102,7 @@ func main() {
 	authHandler := _handler.NewAuthHandler(authRepo, userService)
 	relationshipHandler := _handler.NewRelationshipHandler(relationshipService)
 	userHandler := _handler.NewUserHandler(userService)
+	notificationHandler := _handler.NewNotificationHandler(notificationService)
 
 	publicRoute := e.Group("/public")
 	privateRoute := e.Group("/private")
@@ -107,6 +111,7 @@ func main() {
 	relationshipHandler.RegisterRoutes(privateRoute)
 	userHandler.RegisterRoutes(privateRoute)
 	authHandler.RegisterRoutes(publicRoute)
+	notificationHandler.RegisterRoutes(privateRoute)
 
 	e.GET("/health", healthCheckHandler.HealthCheck)
 
