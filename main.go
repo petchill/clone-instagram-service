@@ -7,6 +7,7 @@ import (
 	_handler "clone-instagram-service/internal/infrastructure/handler"
 	_repo "clone-instagram-service/internal/infrastructure/repository"
 	_subscriber "clone-instagram-service/internal/infrastructure/subscriber"
+	_websocket "clone-instagram-service/internal/infrastructure/websocket"
 	"clone-instagram-service/internal/util"
 	"context"
 	"log"
@@ -103,6 +104,9 @@ func main() {
 	notificationSubscriber := _subscriber.NewNotificationSubscriber(kafkaConfig)
 	notificationSubscriber.SubscribeFollowing(notificationService.SubscribeFollowing)
 
+	// websocket
+	notificationWebSocket := _websocket.NewNotificationWebSocket()
+
 	// handler
 	e := util.InitEchoApp()
 	publicRoute := e.Group("/public")
@@ -121,5 +125,9 @@ func main() {
 	authHandler.RegisterRoutes(publicRoute)
 	notificationHandler.RegisterRoutes(privateRoute)
 	e.GET("/health", healthCheckHandler.HealthCheck)
+
+	// register websocket
+	notificationWebSocket.RegisterNotificationWebSocket(e)
+
 	e.Logger.Fatal(e.Start(":5000"))
 }
