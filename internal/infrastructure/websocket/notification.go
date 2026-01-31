@@ -1,9 +1,14 @@
 package websocket
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"net/http"
+
+	mAuth "clone-instagram-service/internal/domain/model/auth"
+	mNoti "clone-instagram-service/internal/domain/model/notification"
+	eRela "clone-instagram-service/internal/domain/model/relationship/entity"
 
 	"github.com/gorilla/websocket"
 	"github.com/labstack/echo/v4"
@@ -15,10 +20,22 @@ var upgrader = websocket.Upgrader{
 }
 
 type notificationWebSocket struct {
+	notificationSubscriber mNoti.NotificationSubscriber
+	authMiddleWare         mAuth.AuthMiddleWare
 }
 
-func NewNotificationWebSocket() *notificationWebSocket {
-	return &notificationWebSocket{}
+type notificationSocketConnection struct {
+	notificationSubscriber mNoti.NotificationSubscriber
+	authMiddleWare         mAuth.AuthMiddleWare
+	userID                 int
+	conn                   *websocket.Conn
+}
+
+func NewNotificationWebSocket(notificationSubscriber mNoti.NotificationSubscriber, authMiddleWare mAuth.AuthMiddleWare) *notificationWebSocket {
+	return &notificationWebSocket{
+		notificationSubscriber: notificationSubscriber,
+		authMiddleWare:         authMiddleWare,
+	}
 }
 
 func (soc notificationWebSocket) RegisterNotificationWebSocket(e *echo.Echo) {
@@ -28,24 +45,71 @@ func (soc notificationWebSocket) RegisterNotificationWebSocket(e *echo.Echo) {
 }
 
 func (soc notificationWebSocket) ConnectNotificationWebSocket(c echo.Context) error {
+
 	w := c.Response().Writer
 	r := c.Request()
+
+	token := r.URL.Query().Get("accessToken")
+	fmt.Println("token -> ", token)
+	user, err := soc.authMiddleWare.GetUserInfoByAccessToken(c.Request().Context(), token)
+	if err != nil {
+		log.Println("Error => unauthorize => ", err.Error())
+	}
+
 	wHeader := w.Header()
 	upgrader.CheckOrigin = func(r *http.Request) bool {
 		return true
 	}
 	conn, err := upgrader.Upgrade(w, r, wHeader)
+	fmt.Println("connect ", conn.LocalAddr().String())
+	fmt.Println("connect ", conn.RemoteAddr().String())
 	if err != nil {
 		log.Println(err)
 		return err
 	}
 
-	defer conn.Close()
+	socConn := notificationSocketConnection{
+		userID:                 user.ID, // TODO: get userID from token
+		conn:                   conn,
+		notificationSubscriber: soc.notificationSubscriber,
+	}
+
+	socConn.liveConnection()
+
+	fmt.Println("end")
+
+	return nil
+}
+
+func (socConn notificationSocketConnection) followingNotiCallback(ctx context.Context, message eRela.FollowingTopicMessage) error {
+	msg := fmt.Sprintf("User %d followed you", message.UserID)
+	err := socConn.conn.WriteMessage(websocket.TextMessage, []byte(msg))
+	return err
+}
+
+func (socConn notificationSocketConnection) liveConnection() {
+	conCtx, cancelConCtx := context.WithCancel(context.Background())
+	defer func() {
+		fmt.Println("closing connection")
+		socConn.conn.Close()
+		cancelConCtx()
+	}()
+
+	notiGroupID := fmt.Sprintf("noti-%d", socConn.userID)
+	// maybe change to connection identity next time
+
+	// sub topic and push message to client
+	// soccon must have noti sub
+	go socConn.notificationSubscriber.SubscribeFollowingWithID(conCtx, notiGroupID, socConn.followingNotiCallback)
 
 	for {
 		// Read
-		msgType, msg, err := conn.ReadMessage()
+		msgType, msg, err := socConn.conn.ReadMessage()
 		fmt.Printf("type: %v\n", msgType)
+		if msgType == websocket.CloseMessage || msgType == -1 {
+			fmt.Println("Client disconnected")
+			break
+		}
 
 		if err != nil {
 			log.Println("read:", err.Error())
@@ -54,34 +118,10 @@ func (soc notificationWebSocket) ConnectNotificationWebSocket(c echo.Context) er
 		fmt.Printf("recv: %s\n", msg)
 
 		// Write
-		err = conn.WriteMessage(websocket.TextMessage, []byte("Hello, Client!"))
+		err = socConn.conn.WriteMessage(websocket.TextMessage, []byte("Hello, Client!"))
 		if err != nil {
 			log.Println("write:", err)
 			break
 		}
 	}
-
-	// websocket.Handler(func(ws *websocket.Conn) {
-	// 	defer ws.Close()
-	// 	for {
-
-	// 		//
-	// 		// Write
-	// 		err := websocket.Message.Send(ws, "Hello, Client!")
-	// 		if err != nil {
-	// 			c.Logger().Error(err)
-	// 		}
-
-	// 		// receive close message from client
-
-	// 		// Read
-	// 		msg := ""
-	// 		err = websocket.Message.Receive(ws, &msg)
-	// 		if err != nil {
-	// 			c.Logger().Error(err)
-	// 		}
-	// 		fmt.Printf("%s\n", msg)
-	// 	}
-	// }).ServeHTTP(c.Response(), c.Request())
-	return nil
 }

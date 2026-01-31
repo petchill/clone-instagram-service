@@ -3,6 +3,8 @@ package middleware
 import (
 	mAuth "clone-instagram-service/internal/domain/model/auth"
 	mUser "clone-instagram-service/internal/domain/model/user"
+	eUser "clone-instagram-service/internal/domain/model/user/entity"
+	"context"
 	"fmt"
 	"net/http"
 	"strings"
@@ -22,6 +24,20 @@ func NewAuthMiddleWare(authRepo mAuth.AuthRepository, userRepo mUser.UserReposit
 	}
 }
 
+func (mw *authMiddleware) GetUserInfoByAccessToken(ctx context.Context, accessToken string) (eUser.User, error) {
+	authUser, err := mw.authRepo.GetUserInfoFromToken(ctx, accessToken)
+	if err != nil {
+		fmt.Println("authToken", accessToken)
+		return eUser.User{}, err
+	}
+
+	user, exists, err := mw.userRepo.GetUserByGoogleID(ctx, authUser.Sub)
+	if err != nil || !exists {
+		return eUser.User{}, fmt.Errorf("user not found")
+	}
+	return user, nil
+}
+
 func (mw *authMiddleware) AuthWithUser(next echo.HandlerFunc) echo.HandlerFunc {
 	return func(c echo.Context) error {
 		ctx := c.Request().Context()
@@ -35,15 +51,9 @@ func (mw *authMiddleware) AuthWithUser(next echo.HandlerFunc) echo.HandlerFunc {
 			return c.JSON(http.StatusUnauthorized, map[string]string{"status": "failed", "error": "invalid authorization header"})
 		}
 		authToken = token[1]
-		authUser, err := mw.authRepo.GetUserInfoFromToken(ctx, authToken)
+		user, err := mw.GetUserInfoByAccessToken(ctx, authToken)
 		if err != nil {
-			fmt.Println("authToken", authToken)
 			return c.JSON(http.StatusUnauthorized, map[string]string{"status": "failed", "error": err.Error()})
-		}
-
-		user, exists, err := mw.userRepo.GetUserByGoogleID(ctx, authUser.Sub)
-		if err != nil || !exists {
-			return c.JSON(http.StatusUnauthorized, map[string]string{"status": "failed", "error": "user not found"})
 		}
 
 		c.Set("user", user)

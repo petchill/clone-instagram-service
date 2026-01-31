@@ -105,7 +105,7 @@ func main() {
 	notificationSubscriber.SubscribeFollowing(notificationService.SubscribeFollowing)
 
 	// websocket
-	notificationWebSocket := _websocket.NewNotificationWebSocket()
+	notificationWebSocket := _websocket.NewNotificationWebSocket(notificationSubscriber, authMiddleWare)
 
 	// handler
 	e := util.InitEchoApp()
