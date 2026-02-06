@@ -95,12 +95,9 @@ func (socConn notificationSocketConnection) liveConnection() {
 		cancelConCtx()
 	}()
 
-	notiGroupID := fmt.Sprintf("noti-%d", socConn.userID)
-	// maybe change to connection identity next time
-
 	// sub topic and push message to client
 	// soccon must have noti sub
-	go socConn.notificationSubscriber.SubscribeFollowingWithID(conCtx, notiGroupID, socConn.followingNotiCallback)
+	go socConn.notificationSubscriber.SubscribeFollowingWithUserID(conCtx, socConn.userID, socConn.followingNotiCallback)
 
 	for {
 		// Read

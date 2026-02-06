@@ -5,7 +5,9 @@ import (
 	eRela "clone-instagram-service/internal/domain/model/relationship/entity"
 	"context"
 	"encoding/json"
+	"fmt"
 	"log"
+	"strconv"
 
 	"github.com/segmentio/kafka-go"
 	"gorm.io/gorm"
@@ -20,8 +22,7 @@ func NewRelationshipRepository(db *gorm.DB, kafkaConfig model.KafkaConfig) *rela
 
 	followingEventWr := kafka.NewWriter(kafka.WriterConfig{
 		Brokers:      kafkaConfig.Brokers,
-		Topic:        "following",
-		Balancer:     &kafka.LeastBytes{},
+		Balancer:     &kafka.Hash{},
 		RequiredAcks: int(kafka.RequireAll), // good default
 		Async:        false,
 	})
@@ -84,10 +85,16 @@ func (r *relationshipRepository) PublishFollowingTopic(ctx context.Context, mess
 		return err
 	}
 
+	kafkaMessage := kafka.Message{
+		Topic: "following-user-" + strconv.Itoa(message.TargetUserID),
+		Key:   []byte(strconv.Itoa(message.TargetUserID)),
+		Value: messageJson,
+	}
+
+	fmt.Println("kafkaMessage", kafkaMessage)
+
 	err = r.followingEventWr.WriteMessages(ctx,
-		kafka.Message{
-			Value: messageJson,
-		},
+		kafkaMessage,
 	)
 
 	if err != nil {

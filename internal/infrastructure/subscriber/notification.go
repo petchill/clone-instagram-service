@@ -21,13 +21,13 @@ func NewNotificationSubscriber(kafkaConfig model.KafkaConfig) *notificationSubsc
 	}
 }
 
-func (sub *notificationSubscriber) subscribeFollowingWithID(ctx context.Context, id string, callback func(ctx context.Context, message eRela.FollowingTopicMessage) error) error {
+func (sub *notificationSubscriber) subscribeFollowingWithUserID(ctx context.Context, userID int, callback func(ctx context.Context, message eRela.FollowingTopicMessage) error) error {
 	fmt.Println(" start sub")
-	topic := "following"
+	topic := fmt.Sprintf("following-user-%d", userID)
 	r := kafka.NewReader(kafka.ReaderConfig{
 		Brokers:        sub.kafkaConfig.Brokers,
 		Topic:          topic,
-		GroupID:        id,
+		GroupID:        fmt.Sprintf("noti-%d", userID),
 		StartOffset:    kafka.LastOffset, // Start at newest if no committed offset
 		CommitInterval: 0,                // auto-commit interval
 	})
@@ -69,8 +69,8 @@ func (sub *notificationSubscriber) subscribeFollowingWithID(ctx context.Context,
 
 }
 
-func (sub *notificationSubscriber) SubscribeFollowingWithID(ctx context.Context, id string, callback func(ctx context.Context, message eRela.FollowingTopicMessage) error) error {
-	return sub.subscribeFollowingWithID(ctx, id, callback)
+func (sub *notificationSubscriber) SubscribeFollowingWithUserID(ctx context.Context, userID int, callback func(ctx context.Context, message eRela.FollowingTopicMessage) error) error {
+	return sub.subscribeFollowingWithUserID(ctx, userID, callback)
 }
 
 func (sub *notificationSubscriber) SubscribeFollowing(callback func(ctx context.Context, message eRela.FollowingTopicMessage) error) error {
