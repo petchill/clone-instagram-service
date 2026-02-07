@@ -94,6 +94,7 @@ func main() {
 	relationshipService := _service.NewRelationshipService(relationshipRepo)
 	userService := _service.NewUserService(userRepo, authRepo, mediaRepo)
 	notificationService := _service.NewNotificationService(notificationRepo, userRepo)
+	newsFeedService := _service.NewNewsFeedService(mediaRepo, relationshipRepo)
 
 	// middleware
 
@@ -118,12 +119,14 @@ func main() {
 	relationshipHandler := _handler.NewRelationshipHandler(relationshipService)
 	userHandler := _handler.NewUserHandler(userService)
 	notificationHandler := _handler.NewNotificationHandler(notificationService)
+	newsFeedHandler := _handler.NewNewsFeedHandler(newsFeedService)
 	privateRoute.Use(authMiddleWare.AuthWithUser)
 	mediaHandler.RegisterRoutes(privateRoute)
 	relationshipHandler.RegisterRoutes(privateRoute)
 	userHandler.RegisterRoutes(privateRoute)
 	authHandler.RegisterRoutes(publicRoute)
 	notificationHandler.RegisterRoutes(privateRoute)
+	newsFeedHandler.RegisterRoutes(privateRoute)
 	e.GET("/health", healthCheckHandler.HealthCheck)
 
 	// register websocket
