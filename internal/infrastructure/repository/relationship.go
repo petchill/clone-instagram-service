@@ -77,7 +77,7 @@ func (r *relationshipRepository) DeleteFollowingByUserIDAndTargetID(ctx context.
 	return nil
 }
 
-func (r *relationshipRepository) PublishFollowingTopic(ctx context.Context, message eRela.FollowingTopicMessage) error {
+func (r *relationshipRepository) PublishFollowingTopicByUser(ctx context.Context, message eRela.FollowingTopicMessage) error {
 
 	messageJson, err := json.Marshal(message)
 	if err != nil {
@@ -87,7 +87,31 @@ func (r *relationshipRepository) PublishFollowingTopic(ctx context.Context, mess
 
 	kafkaMessage := kafka.Message{
 		Topic: "following-user-" + strconv.Itoa(message.TargetUserID),
-		Key:   []byte(strconv.Itoa(message.TargetUserID)),
+		Value: messageJson,
+	}
+
+	err = r.followingEventWr.WriteMessages(ctx,
+		kafkaMessage,
+	)
+
+	if err != nil {
+		log.Println("Error from publish message in topic following")
+		return err
+	}
+
+	return nil
+}
+
+func (r *relationshipRepository) PublishFollowingTopic(ctx context.Context, message eRela.FollowingTopicMessage) error {
+
+	messageJson, err := json.Marshal(message)
+	if err != nil {
+		log.Println("Error from marshal message in topic following by user")
+		return err
+	}
+
+	kafkaMessage := kafka.Message{
+		Topic: "following",
 		Value: messageJson,
 	}
 

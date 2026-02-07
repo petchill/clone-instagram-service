@@ -85,6 +85,5 @@ func (s *notificationService) SubscribeFollowing(ctx context.Context, followingM
 		return err
 	}
 
-	// TODO: send notification to user via websocket (future work)
 	return nil
 }
