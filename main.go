@@ -88,13 +88,14 @@ func main() {
 	authRepo := _repo.NewAuthRepository(oauthConfig)
 	userRepo := _repo.NewUserRepository(db)
 	notificationRepo := _repo.NewNotificationRepository(db)
+	newsFeedRepo := _repo.NewNewsFeedRepository(db)
 
 	//service
 	mediaService := _service.NewMediaService(mediaRepo)
 	relationshipService := _service.NewRelationshipService(relationshipRepo)
 	userService := _service.NewUserService(userRepo, authRepo, mediaRepo)
 	notificationService := _service.NewNotificationService(notificationRepo, userRepo)
-	newsFeedService := _service.NewNewsFeedService(mediaRepo, relationshipRepo)
+	newsFeedService := _service.NewNewsFeedService(newsFeedRepo, mediaRepo, relationshipRepo)
 
 	// middleware
 
