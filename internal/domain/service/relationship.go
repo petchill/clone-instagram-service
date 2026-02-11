@@ -49,7 +49,10 @@ func (s *relationshipService) FollowUser(ctx context.Context, userID int, target
 	}
 
 	err = s.relationshipRepo.PublishFollowingTopic(ctx, topicMessage)
-
+	if err != nil {
+		return err
+	}
+	err = s.relationshipRepo.PublishFollowingTopicByUser(ctx, topicMessage)
 	if err != nil {
 		return err
 	}

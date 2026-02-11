@@ -11,4 +11,5 @@ type RelationshipRepository interface {
 	GetAllFollowerIDsByUserID(ctx context.Context, userID int) ([]int, error)
 	GetAllFollowingIDsByUserID(ctx context.Context, userID int) ([]int, error)
 	PublishFollowingTopic(ctx context.Context, message eRela.FollowingTopicMessage) error
+	PublishFollowingTopicByUser(ctx context.Context, message eRela.FollowingTopicMessage) error
 }

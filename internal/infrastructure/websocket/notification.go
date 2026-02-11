@@ -2,6 +2,7 @@ package websocket
 
 import (
 	"context"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -81,9 +82,19 @@ func (soc notificationWebSocket) ConnectNotificationWebSocket(c echo.Context) er
 	return nil
 }
 
+type MessageType struct {
+	EventType string `json:"event_type"`
+	Payload   string `json:"payload"`
+}
+
 func (socConn notificationSocketConnection) followingNotiCallback(ctx context.Context, message eRela.FollowingTopicMessage) error {
 	msg := fmt.Sprintf("User %d followed you", message.UserID)
-	err := socConn.conn.WriteMessage(websocket.TextMessage, []byte(msg))
+	msgObj := MessageType{
+		EventType: "notification",
+		Payload:   msg,
+	}
+	b, _ := json.Marshal(msgObj)
+	err := socConn.conn.WriteMessage(websocket.TextMessage, b)
 	return err
 }
 
