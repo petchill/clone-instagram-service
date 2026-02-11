@@ -38,6 +38,9 @@ func (h *mediaHandler) PostMedia(c echo.Context) error {
 		return err
 	}
 
+	caption := c.FormValue("caption")
+	fmt.Println("caption ", caption)
+
 	src, err := file.Open()
 	if err != nil {
 		fmt.Println("err ", err)
@@ -48,7 +51,7 @@ func (h *mediaHandler) PostMedia(c echo.Context) error {
 
 	ctx := c.Request().Context()
 
-	err = h.mediaService.CreateAndStoreMedia(ctx, user.ID, file.Filename, src, "hello1")
+	err = h.mediaService.CreateAndStoreMedia(ctx, user.ID, file.Filename, src, caption)
 	if err != nil {
 		fmt.Errorf("This is error", err)
 		fmt.Println("err ", err)

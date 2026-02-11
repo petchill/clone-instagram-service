@@ -45,8 +45,8 @@ func (r *newsFeedRepository) GetNewsFeedByFilter(ctx context.Context, filter eNe
 		u.id = f.target_user_id
 	where
 		f.user_id = ?
-	offset ?
-	limit ?
+		offset ?
+		limit ?
 	`, filter.UserID, filter.Offset, filter.Limit).Scan(&newsFeeds).Error
 
 	if err != nil {
