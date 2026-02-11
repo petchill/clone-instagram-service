@@ -39,7 +39,6 @@ func (h *mediaHandler) PostMedia(c echo.Context) error {
 	}
 
 	caption := c.FormValue("caption")
-	fmt.Println("caption ", caption)
 
 	src, err := file.Open()
 	if err != nil {
