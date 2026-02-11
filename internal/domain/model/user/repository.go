@@ -11,4 +11,5 @@ type UserRepository interface {
 	GetFollowingUsersByUserID(ctx context.Context, userID int) ([]eUser.User, error)
 	GetFollowerUsersByUserID(ctx context.Context, userID int) ([]eUser.User, error)
 	GetUserByID(ctx context.Context, userID int) (eUser.User, bool, error)
+	GetUserByNameOrEmail(ctx context.Context, searchText string) ([]eUser.User, error)
 }

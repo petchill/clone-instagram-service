@@ -81,3 +81,15 @@ func (r *userRepository) GetUserByID(ctx context.Context, userID int) (eUser.Use
 	}
 	return user, true, nil
 }
+
+func (r *userRepository) GetUserByNameOrEmail(ctx context.Context, searchText string) ([]eUser.User, error) {
+	users := []eUser.User{}
+	err := r.gormDB.Table("users").Where("name LIKE ?", fmt.Sprintf("%s%%", searchText)).Or("email LIKE ?", fmt.Sprintf("%s%%", searchText)).Find(&users).Error
+	if err != nil {
+		fmt.Println("error finding user by NameOrEmail:", err)
+
+		log.Println("error finding user by NameOrEmail:", err)
+		return []eUser.User{}, err
+	}
+	return users, nil
+}

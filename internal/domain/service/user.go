@@ -103,3 +103,8 @@ func (s *userService) GetUserProfileByGoogleSubID(ctx context.Context, googleSub
 
 	return resp, nil
 }
+
+func (s *userService) SearchUsersByNameOrEmail(ctx context.Context, searchText string) ([]eUser.User, error) {
+	return s.userRepo.GetUserByNameOrEmail(ctx, searchText)
+
+}
