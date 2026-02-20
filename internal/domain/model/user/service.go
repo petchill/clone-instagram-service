@@ -11,4 +11,5 @@ type UserService interface {
 	LoginWithGoogleAccessCode(ctx context.Context, googleAccessCode string) (mAuth.AccessCodeResponse, error)
 	GetUserProfileByGoogleSubID(ctx context.Context, googleSubID string) (mAgg.UserProfile, error)
 	SearchUsersByNameOrEmail(ctx context.Context, searchText string) ([]eUser.User, error)
+	GetUserProfileByUserID(ctx context.Context, userID int) (mAgg.UserProfile, error)
 }

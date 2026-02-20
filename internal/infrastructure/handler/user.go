@@ -5,6 +5,7 @@ import (
 	eUser "clone-instagram-service/internal/domain/model/user/entity"
 	"fmt"
 	"net/http"
+	"strconv"
 
 	"github.com/labstack/echo/v4"
 )
@@ -20,6 +21,7 @@ func NewUserHandler(userService mUser.UserService) *userHandler {
 
 func (h *userHandler) RegisterRoutes(e *echo.Group) {
 	e.GET("/user/profile", h.GetUserProfile)
+	e.GET("/user/:id", h.GetUserByID)
 	e.GET("/user/search", h.GetUsersByPartialNameOrEmail)
 }
 
@@ -54,5 +56,21 @@ func (h *userHandler) GetUsersByPartialNameOrEmail(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, resultUsers)
+}
+
+func (h *userHandler) GetUserByID(c echo.Context) error {
+	ctx := c.Request().Context()
+	id, err := strconv.Atoi(c.Param("id"))
+	if err != nil {
+		return c.JSON(http.StatusBadRequest, map[string]string{"status": "ERROR", "error": "id must be number"})
+	}
+
+	profile, err := h.userService.GetUserProfileByUserID(ctx, id)
+	if err != nil {
+		c.JSON(http.StatusInternalServerError, map[string]string{"status": "ERROR", "error": err.Error()})
+		return nil
+	}
+
+	return c.JSON(http.StatusOK, profile)
 
 }

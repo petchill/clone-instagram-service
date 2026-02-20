@@ -7,7 +7,9 @@ import (
 	mUser "clone-instagram-service/internal/domain/model/user"
 	eUser "clone-instagram-service/internal/domain/model/user/entity"
 	"context"
+	"errors"
 	"fmt"
+	"log"
 )
 
 type userService struct {
@@ -104,7 +106,58 @@ func (s *userService) GetUserProfileByGoogleSubID(ctx context.Context, googleSub
 	return resp, nil
 }
 
+func (s *userService) GetUserProfileByUserID(ctx context.Context, userID int) (mAgg.UserProfile, error) {
+	resp := mAgg.UserProfile{}
+	// get user from DB by googleSubID
+	user, exist, err := s.userRepo.GetUserByID(ctx, userID)
+	if err != nil {
+		return resp, err
+	}
+	if !exist {
+		err = fmt.Errorf("user not found")
+		return resp, err
+	}
+
+	// get followers - all followers should have user info
+	followingUsers, err := s.userRepo.GetFollowingUsersByUserID(ctx, user.ID)
+	if err != nil {
+		return resp, err
+	}
+	// get followings - all followers should have user info
+	followerUsers, err := s.userRepo.GetFollowerUsersByUserID(ctx, user.ID)
+	if err != nil {
+		return resp, err
+	}
+	// get posts
+	posts, err := s.mediaRepo.GetMediasByOwnerUserID(ctx, user.ID)
+	if err != nil {
+		return resp, err
+	}
+
+	resp = mAgg.UserProfile{
+		User:       user,
+		Followers:  followerUsers,
+		Followings: followingUsers,
+		Posts:      posts,
+	}
+
+	return resp, nil
+}
+
 func (s *userService) SearchUsersByNameOrEmail(ctx context.Context, searchText string) ([]eUser.User, error) {
 	return s.userRepo.GetUserByNameOrEmail(ctx, searchText)
 
+}
+
+func (s *userService) GetUserByID(ctx context.Context, id int) (eUser.User, error) {
+	user, exist, err := s.userRepo.GetUserByID(ctx, id)
+	if err != nil {
+		return user, err
+	}
+	if !exist {
+		errMsg := fmt.Sprintf("Error: User id %v is not existed", id)
+		log.Println(errMsg)
+		return user, errors.New("This user is no existed")
+	}
+	return user, nil
 }
