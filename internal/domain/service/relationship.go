@@ -60,6 +60,26 @@ func (s *relationshipService) FollowUser(ctx context.Context, userID int, target
 	return nil
 }
 
+func (s *relationshipService) UnFollowUser(ctx context.Context, userID int, targetUserID int) error {
+	followingIds, err := s.relationshipRepo.GetAllFollowingIDsByUserID(ctx, userID)
+	if err != nil {
+		return err
+	}
+
+	if !IntIsContained(followingIds, targetUserID) {
+		err = fmt.Errorf("this following is not exists")
+		log.Printf("Error: %s", err)
+		return err
+	}
+
+	err = s.relationshipRepo.DeleteFollowingByUserIDAndTargetID(ctx, userID, targetUserID)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func IntIsContained(list []int, target int) bool {
 	for _, i := range list {
 		if i == target {

@@ -95,7 +95,7 @@ func (r *relationshipRepository) PublishFollowingTopicByUser(ctx context.Context
 	)
 
 	if err != nil {
-		log.Println("Error from publish message in topic following")
+		log.Println("Error from publish message in topic following - user ", err)
 		return err
 	}
 
@@ -122,7 +122,7 @@ func (r *relationshipRepository) PublishFollowingTopic(ctx context.Context, mess
 	)
 
 	if err != nil {
-		log.Println("Error from publish message in topic following")
+		log.Println("Error from publish message in topic following", err)
 		return err
 	}
 
